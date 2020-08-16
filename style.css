@@ -8,4 +8,62 @@
     display: flex;
     flex-wrap: wrap;
     margin: auto;
+    margin: 10px auto;
+}
+
+.ship {
+    background-color: pink;
+}
+
+.carrier {
+    height: 40px;
+    width: 200px;
+    border-radius: 20%;
+}
+
+.verticle {
+    width: 40px;
+    border-radius: 20%;
+}
+
+.carrier-verticle {
+    height: 200px;
+    width: 40px;
+    border-radius: 20%;
+}
+
+.battleship {
+    height: 40px;
+    width: 160px;
+    border-radius: 20%;
+}
+
+.battleship-verticle {
+    height: 160px;
+    width: 40px;
+    border-radius: 20%;
+}
+
+.destroyer {
+    height: 40px;
+    width: 120px;
+    border-radius: 20%;
+}
+
+.destroyer-verticle {
+    height: 120px;
+    width: 40px;
+    border-radius: 20%;
+}
+
+.patrol-boat {
+    height: 40px;
+    width: 80px;
+    border-radius: 20%;
+}
+
+.patrol-boat-verticle {
+    height: 80px;
+    width: 40px;
+    border-radius: 20%;
 }
