@@ -34,45 +34,59 @@ ships.forEach(ship => {
     ship.addEventListener('click', function () {
         let id = ship.getAttribute('id');
         let isOutofGrid;
-        fleets.forEach(fleet => {
-            if (fleet.name == id) {
-                fleet.isHorizontal = !fleet.isHorizontal;
-            }
-        })
+        //Initial rotate when all ships are outside of the board
+        if (ship.parentElement.getAttribute('data-X') == null) {
+            fleets.forEach(fleet => {
+                if (fleet.name == id) {
+                    fleet.isHorizontal = !fleet.isHorizontal;
+                }
+            })
+            ship.classList.toggle(`${id}-verticle`);
+        }
+        //Rotate while inside of the board
         //Assign positon to each child of ship when rotate inside the board
         if (ship.parentElement.getAttribute('data-X') !== null) {
             let positionX = ship.parentElement.getAttribute("data-X");
             let positionY = ship.parentElement.getAttribute("data-Y");
             fleets.forEach(fleet => {
                 if (fleet.name == id) {
+                    //Rotate when the ship is horizontal
                     if (fleet.isHorizontal) {
-                        // let arr = [];
-                        for (j = 0; j < ship.children.length; j++) {
-                            let positionXEach = parseInt(positionX) + j;
-                            // arr = [...arr, positionXEach]
-                            ship.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                        //Check if rotate to verticle will exceed the board
+                        let shipEndPosition = yLetter.indexOf(positionY) + fleet.length;
+                        if (shipEndPosition > 10) {
+                            isOutofGrid = true;
+                            return;
                         }
-                        // if (arr[arr.length-1] > 10) {
-                        //     isOutofGrid = true;
-                        // }
-                    } else {
-                        // let arr = [];
+                        fleet.isHorizontal = !fleet.isHorizontal;
+                        //If after rotate to verticle it's inside the board, Assign verticle position
                         for (j = 0; j < ship.children.length; j++) {
                             let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
-                            // arr = [...arr, yLetter.indexOf(positionY) + j + 1]
                             ship.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
                         }
-                        // if (arr[arr.length-1] > 10) {
-                        //     isOutofGrid = true;
-                        // }
+                    } 
+                    //What click does when ship is veriticle 
+                    else {
+                        //Check if rotate to verticle will exceed the board
+                        let shipEndPosition = parseInt(positionX) + fleet.length - 1;
+                        if (shipEndPosition > 10) {
+                            isOutofGrid = true;
+                            return;
+                        }
+                        fleet.isHorizontal = !fleet.isHorizontal;
+                        //Assign verticle position
+                        for (j = 0; j < ship.children.length; j++) {
+                            let positionXEach = parseInt(positionX) + j;
+                            ship.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                        }
                     }
+                    if (isOutofGrid) {
+                        return;
+                    }
+                    ship.classList.toggle(`${id}-verticle`);
                 }
             })
         }
-        if (isOutofGrid) {
-            return
-        }
-        ship.classList.toggle(`${id}-verticle`);
     })
 })
 
