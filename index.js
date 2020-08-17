@@ -14,11 +14,11 @@ function createGrid(grid) {
         div.style.width = '40px';
         //Assign data attribute to the borad for coordination;
         //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
-        let dataX = (i+1)%10;
+        let dataX = (i + 1) % 10;
         if (dataX == 0) {
             dataX = 10;
         }
-        let dataYNumber = Math.floor(((i)/10));
+        let dataYNumber = Math.floor(((i) / 10));
         let yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
         let dataYLetter = yLetter[(dataYNumber)]
         div.setAttribute('data-x', dataX)
@@ -46,24 +46,68 @@ ships[4].addEventListener('click', function () {
     ships[4].classList.toggle('patrol-boat-verticle')
 })
 
+//Ship State 
+let fleets = [
+    {
+        name: 'carrier',
+        length: 5,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'battleship',
+        length: 4,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'destroyer1',
+        length: 3,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'destroyer2',
+        length: 3,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'patrol-boat',
+        length: 2,
+        isHorizontal: true,
+        isTaken: false,
+    }
+]
+
 // Drag and Drop ships
+const dragOver = function (ev) {
+    ev.preventDefault();
+}
+
+const onDrop = function (ev) {
+    ev.preventDefault();
+    let data = ev.dataTransfer.getData('text/plain');
+    ev.target.appendChild(document.getElementById(data))
+}
+
 ships.forEach(ship => {
     ship.addEventListener('dragstart', function (ev) {
-        ev.dataTransfer.setData("text", ev.target.id)
-        console.log(ev.target)
-        console.log(this.child)
-        console.log(ev.target.id)
+        ev.dataTransfer.setData("text/plain", ev.target.id)
+        let shipName = ev.target.getAttribute('id');
+        fleets.forEach(ship => {
+            if (ship.name == shipName) {
+                let shipLenght = ship.length;
+            }
+        })
+        playerGrid.addEventListener('dragover', dragOver)
+        playerGrid.addEventListener('drop', onDrop)
+    });
+    //Remove playerGrid dragover and drop event; Avoid player drag other item inside
+    ship.addEventListener('dragend', function(){
+        playerGrid.removeEventListener('dragover', dragOver)
+        playerGrid.removeEventListener('drop', onDrop)
     })
-})
-
-playerGrid.addEventListener('dragover', function (ev) {
-    ev.preventDefault()
-})
-
-playerGrid.addEventListener('drop', function (ev) {
-    ev.preventDefault();
-    let data = ev.dataTransfer.getData('text');
-    ev.target.appendChild(document.getElementById(data))
 })
 
 //Computer Generate Ships
