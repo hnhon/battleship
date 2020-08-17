@@ -33,32 +33,46 @@ createGrid(grids[1]);
 ships.forEach(ship => {
     ship.addEventListener('click', function () {
         let id = ship.getAttribute('id');
-        ship.classList.toggle(`${id}-verticle`);
+        let isOutofGrid;
         fleets.forEach(fleet => {
             if (fleet.name == id) {
                 fleet.isHorizontal = !fleet.isHorizontal;
             }
         })
+        //Assign positon to each child of ship when rotate inside the board
         if (ship.parentElement.getAttribute('data-X') !== null) {
-            console.log(ship.parentElement.getAttribute('data-X'))
             let positionX = ship.parentElement.getAttribute("data-X");
             let positionY = ship.parentElement.getAttribute("data-Y");
             fleets.forEach(fleet => {
                 if (fleet.name == id) {
                     if (fleet.isHorizontal) {
+                        // let arr = [];
                         for (j = 0; j < ship.children.length; j++) {
                             let positionXEach = parseInt(positionX) + j;
+                            // arr = [...arr, positionXEach]
                             ship.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
                         }
+                        // if (arr[arr.length-1] > 10) {
+                        //     isOutofGrid = true;
+                        // }
                     } else {
+                        // let arr = [];
                         for (j = 0; j < ship.children.length; j++) {
                             let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
+                            // arr = [...arr, yLetter.indexOf(positionY) + j + 1]
                             ship.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
                         }
+                        // if (arr[arr.length-1] > 10) {
+                        //     isOutofGrid = true;
+                        // }
                     }
                 }
             })
         }
+        if (isOutofGrid) {
+            return
+        }
+        ship.classList.toggle(`${id}-verticle`);
     })
 })
 
@@ -117,34 +131,33 @@ const onDrop = function (ev) {
     fleets.forEach(ship => {
         if (ship.name == data) {
             if (ship.isHorizontal) {
-                //To store last child of the ship position number
-                let arr = [];
+                let shipEndPosition = parseInt(positionX) + draggedShip.children.length - 1;
+                if (shipEndPosition > 10) {
+                    isOutofGrid = true;
+                    return;
+                }
+                //Assign horizontal position
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionXEach = parseInt(positionX) + j;
-                    arr = [...arr, positionXEach];
                     draggedShip.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
                 }
-                //To check if the ship outside
-                if (arr[arr.length-1] > 10) {
-                    isOutofGrid = true;
-                }
             } else {
-                let arr = [];
+                let shipEndPosition = yLetter.indexOf(positionY) + draggedShip.children.length;
+                if (shipEndPosition > 10) {
+                    isOutofGrid = true;
+                    return;
+                }
+                // Assign verticle position
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
-                    arr = [...arr, yLetter.indexOf(positionY) + j + 1] 
                     draggedShip.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
-                }
-                if (arr[arr.length-1] > 10) {
-                    isOutofGrid = true;
                 }
             }
         }
     })
-    //If ship out of grid, don't drop
     if (isOutofGrid) {
         return
-    };
+    }
     ev.target.appendChild(draggedShip)
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
