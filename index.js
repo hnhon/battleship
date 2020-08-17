@@ -2,10 +2,8 @@ const grids = document.querySelectorAll('.grid');
 const ships = document.querySelectorAll('.ship');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
-
-grids[0].style.backgroundColor = 'lightBlue';
-grids[1].style.backgroundColor = 'lightBlue';
-
+const newGame = document.querySelector('#new-game')
+const start = document.querySelector('#start')
 
 //Create smaller grids inside larger grids
 function createGrid(grid) {
@@ -14,6 +12,17 @@ function createGrid(grid) {
         grid.appendChild(div);
         div.style.height = '40px';
         div.style.width = '40px';
+        //Assign data attribute to the borad for coordination;
+        //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
+        let dataX = (i+1)%10;
+        if (dataX == 0) {
+            dataX = 10;
+        }
+        let dataYNumber = Math.floor(((i)/10));
+        let yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
+        let dataYLetter = yLetter[(dataYNumber)]
+        div.setAttribute('data-x', dataX)
+        div.setAttribute('data-y', dataYLetter)
     }
 };
 
@@ -41,6 +50,9 @@ ships[4].addEventListener('click', function () {
 ships.forEach(ship => {
     ship.addEventListener('dragstart', function (ev) {
         ev.dataTransfer.setData("text", ev.target.id)
+        console.log(ev.target)
+        console.log(this.child)
+        console.log(ev.target.id)
     })
 })
 
@@ -60,6 +72,7 @@ function generateShip(height, width, dir) {
     computerGrid.appendChild(div);
     div.style.borderRadius = '20%'
     div.style.backgroundColor = 'pink'
+    //change ship direction
     if (dir == 0) {
         div.style.width = width;
         div.style.height = height
@@ -67,11 +80,10 @@ function generateShip(height, width, dir) {
         div.style.width = height;
         div.style.height = width;
     }
-    console.log(dir)
 }
 
-function dir () {
-    return Math.floor(Math.random(0, 1)*2) 
+function dir() {
+    return Math.floor(Math.random(0, 1) * 2)
 }
 
 generateShip('200px', '40px', dir());
