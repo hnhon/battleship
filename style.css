@@ -54,7 +54,13 @@
     border-radius: 20%;
 }
 
-.destroyer-verticle {
+.destroyer1-verticle {
+    height: 120px;
+    width: 40px;
+    border-radius: 20%;
+}
+
+.destroyer2-verticle {
     height: 120px;
     width: 40px;
     border-radius: 20%;
