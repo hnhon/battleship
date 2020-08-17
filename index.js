@@ -32,24 +32,26 @@ createGrid(grids[1]);
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
     ship.addEventListener('click', function () {
-        let id = ship.getAttribute('id');
+        let shipName = ship.getAttribute('id');
         let isOutofGrid;
         //Initial rotate when all ships are outside of the board
         if (ship.parentElement.getAttribute('data-X') == null) {
             fleets.forEach(fleet => {
-                if (fleet.name == id) {
+                if (fleet.name == shipName) {
                     fleet.isHorizontal = !fleet.isHorizontal;
                 }
             })
-            ship.classList.toggle(`${id}-verticle`);
+            ship.classList.toggle(`${shipName}-verticle`);
         }
         //Rotate while inside of the board
         //Assign positon to each child of ship when rotate inside the board
         if (ship.parentElement.getAttribute('data-X') !== null) {
+            //Get the first child of ship postion data
             let positionX = ship.parentElement.getAttribute("data-X");
             let positionY = ship.parentElement.getAttribute("data-Y");
+            //Get ship state data
             fleets.forEach(fleet => {
-                if (fleet.name == id) {
+                if (fleet.name == shipName) {
                     //Rotate when the ship is horizontal
                     if (fleet.isHorizontal) {
                         //Check if rotate to verticle will exceed the board
@@ -58,6 +60,7 @@ ships.forEach(ship => {
                             isOutofGrid = true;
                             return;
                         }
+                        //If not outside of the board, rotate
                         fleet.isHorizontal = !fleet.isHorizontal;
                         //If after rotate to verticle it's inside the board, Assign verticle position
                         for (j = 0; j < ship.children.length; j++) {
@@ -83,7 +86,7 @@ ships.forEach(ship => {
                     if (isOutofGrid) {
                         return;
                     }
-                    ship.classList.toggle(`${id}-verticle`);
+                    ship.classList.toggle(`${shipName}-verticle`);
                 }
             })
         }
