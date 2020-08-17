@@ -88,7 +88,24 @@ const dragOver = function (ev) {
 const onDrop = function (ev) {
     ev.preventDefault();
     let data = ev.dataTransfer.getData('text/plain');
-    ev.target.appendChild(document.getElementById(data))
+    let draggedShip = document.getElementById(data);
+    ev.target.appendChild(draggedShip)
+    //Get Drop Area Position from the first child position of the ship
+    let positionX = ev.target.getAttribute("data-X");
+    let positionY = ev.target.getAttribute("data-Y");
+    fleets.forEach(ship => {
+        if (ship.name == data) {
+            if (ship.isHorizontal) {
+                for (j = 0; j < draggedShip.children.length; j++) {
+                    let positionXEach = parseInt(positionX) + j;
+                    draggedShip.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                }
+            }
+        }
+    })
+
+    console.log(ev.target.getAttribute("data-X"))
+    console.log(ev.target.getAttribute("data-Y"))
 }
 
 ships.forEach(ship => {
@@ -104,7 +121,7 @@ ships.forEach(ship => {
         playerGrid.addEventListener('drop', onDrop)
     });
     //Remove playerGrid dragover and drop event; Avoid player drag other item inside
-    ship.addEventListener('dragend', function(){
+    ship.addEventListener('dragend', function () {
         playerGrid.removeEventListener('dragover', dragOver)
         playerGrid.removeEventListener('drop', onDrop)
     })
