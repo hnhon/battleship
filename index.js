@@ -29,9 +29,14 @@ function createGrid(grid) {
 createGrid(grids[0]);
 createGrid(grids[1]);
 
-//Rotate ships
+//Rotate ships; Change Ship isHorizontal State
 ships[0].addEventListener('click', function () {
-    ships[0].classList.toggle('carrier-verticle')
+    ships[0].classList.toggle('carrier-verticle');
+    fleets.forEach(ship => {
+        if (ship.name == ships[0].getAttribute('id')) {
+            ship.isHorizontal = !ship.isHorizontal;
+        }
+    })
 })
 ships[1].addEventListener('click', function () {
     ships[1].classList.toggle('battleship-verticle')
