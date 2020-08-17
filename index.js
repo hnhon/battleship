@@ -31,7 +31,7 @@ createGrid(grids[1]);
 
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
-    ship.addEventListener('click', function(){
+    ship.addEventListener('click', function () {
         let id = ship.getAttribute('id');
         ship.classList.toggle(`${id}-verticle`);
         fleets.forEach(fleet => {
@@ -39,29 +39,28 @@ ships.forEach(ship => {
                 fleet.isHorizontal = !fleet.isHorizontal;
             }
         })
+        if (ship.parentElement.getAttribute('data-X') !== null) {
+            console.log(ship.parentElement.getAttribute('data-X'))
+            let positionX = ship.parentElement.getAttribute("data-X");
+            let positionY = ship.parentElement.getAttribute("data-Y");
+            fleets.forEach(fleet => {
+                if (fleet.name == id) {
+                    if (fleet.isHorizontal) {
+                        for (j = 0; j < ship.children.length; j++) {
+                            let positionXEach = parseInt(positionX) + j;
+                            ship.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                        }
+                    } else {
+                        for (j = 0; j < ship.children.length; j++) {
+                            let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
+                            ship.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
+                        }
+                    }
+                }
+            })
+        }
     })
 })
-
-// ships[0].addEventListener('click', function () {
-//     ships[0].classList.toggle('carrier-verticle');
-//     fleets.forEach(ship => {
-//         if (ship.name == ships[0].getAttribute('id')) {
-//             ship.isHorizontal = !ship.isHorizontal;
-//         }
-//     })
-// })
-// ships[1].addEventListener('click', function () {
-//     ships[1].classList.toggle('battleship-verticle')
-// })
-// ships[2].addEventListener('click', function () {
-//     ships[2].classList.toggle('destroyer-verticle')
-// })
-// ships[3].addEventListener('click', function () {
-//     ships[3].classList.toggle('destroyer-verticle')
-// })
-// ships[4].addEventListener('click', function () {
-//     ships[4].classList.toggle('patrol-boat-verticle')
-// })
 
 //Ship State 
 let fleets = [
@@ -97,6 +96,9 @@ let fleets = [
     }
 ]
 
+//Position 
+
+
 // Drag and Drop ships
 const dragOver = function (ev) {
     ev.preventDefault();
@@ -107,10 +109,10 @@ const onDrop = function (ev) {
     let data = ev.dataTransfer.getData('text/plain');
     let draggedShip = document.getElementById(data);
     ev.target.appendChild(draggedShip)
-    //Get Drop Area Position from the first child position of the ship
+    // Get Drop Area Position from the first child position of the ship
     let positionX = ev.target.getAttribute("data-X");
     let positionY = ev.target.getAttribute("data-Y");
-    //Assign position id to ship
+    // Assign position id to ship
     fleets.forEach(ship => {
         if (ship.name == data) {
             if (ship.isHorizontal) {
