@@ -108,7 +108,8 @@ const onDrop = function (ev) {
     ev.preventDefault();
     let data = ev.dataTransfer.getData('text/plain');
     let draggedShip = document.getElementById(data);
-    ev.target.appendChild(draggedShip)
+    //to later check if ship out of grid
+    let isOutofGrid;
     // Get Drop Area Position from the first child position of the ship
     let positionX = ev.target.getAttribute("data-X");
     let positionY = ev.target.getAttribute("data-Y");
@@ -116,19 +117,35 @@ const onDrop = function (ev) {
     fleets.forEach(ship => {
         if (ship.name == data) {
             if (ship.isHorizontal) {
+                //To store last child of the ship position number
+                let arr = [];
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionXEach = parseInt(positionX) + j;
+                    arr = [...arr, positionXEach];
                     draggedShip.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
                 }
+                //To check if the ship outside
+                if (arr[arr.length-1] > 10) {
+                    isOutofGrid = true;
+                }
             } else {
+                let arr = [];
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
+                    arr = [...arr, yLetter.indexOf(positionY) + j + 1] 
                     draggedShip.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
+                }
+                if (arr[arr.length-1] > 10) {
+                    isOutofGrid = true;
                 }
             }
         }
     })
-
+    //If ship out of grid, don't drop
+    if (isOutofGrid) {
+        return
+    };
+    ev.target.appendChild(draggedShip)
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
 }
