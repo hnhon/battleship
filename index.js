@@ -2,8 +2,9 @@ const grids = document.querySelectorAll('.grid');
 const ships = document.querySelectorAll('.ship');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
-const newGame = document.querySelector('#new-game')
-const start = document.querySelector('#start')
+const newGame = document.querySelector('#new-game');
+const start = document.querySelector('#start');
+const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
 
 //Create smaller grids inside larger grids
 function createGrid(grid) {
@@ -19,7 +20,6 @@ function createGrid(grid) {
             dataX = 10;
         }
         let dataYNumber = Math.floor(((i) / 10));
-        let yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
         let dataYLetter = yLetter[(dataYNumber)]
         div.setAttribute('data-x', dataX)
         div.setAttribute('data-y', dataYLetter)
@@ -99,6 +99,11 @@ const onDrop = function (ev) {
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionXEach = parseInt(positionX) + j;
                     draggedShip.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                }
+            } else {
+                for (j = 0; j < draggedShip.children.length; j++) {
+                    let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
+                    draggedShip.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
                 }
             }
         }
