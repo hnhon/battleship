@@ -1,5 +1,6 @@
 const grids = document.querySelectorAll('.grid');
 const ships = document.querySelectorAll('.ship');
+const shipSmallerGrids = document.querySelectorAll('.ship-smaller-grid')
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
 const newGame = document.querySelector('#new-game');
@@ -58,7 +59,7 @@ function createGrid(grid, whosGrid) {
         let dataYLetter = yLetter[(dataYNumber)]
         div.setAttribute('data-x', dataX)
         div.setAttribute('data-y', dataYLetter)
-        div.setAttribute('position', dataX+dataYLetter+'-'+whosGrid)
+        div.setAttribute('position', dataX + '-' + dataYLetter + '-' + whosGrid)
     }
 };
 
@@ -76,7 +77,7 @@ smallerGrids.forEach(el => {
 })
 
 // Set each individual grid(.smaller-grid) of a board isOverlaped state
-function setIsOverlaped () {
+function setIsOverlaped() {
 }
 
 
@@ -116,9 +117,9 @@ ships.forEach(ship => {
                         //If after rotate to verticle it's inside the board, Assign verticle position
                         for (j = 0; j < ship.children.length; j++) {
                             let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
-                            ship.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
+                            ship.children[j].setAttribute('id', `${positionX}-${positionYEach}-player`)
                         }
-                    } 
+                    }
                     //What click does when ship is veriticle 
                     else {
                         //Check if rotate to verticle will exceed the board
@@ -131,7 +132,7 @@ ships.forEach(ship => {
                         //Assign verticle position
                         for (j = 0; j < ship.children.length; j++) {
                             let positionXEach = parseInt(positionX) + j;
-                            ship.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                            ship.children[j].setAttribute('id', `${positionXEach}-${positionY}-player`)
                         }
                     }
                     if (isOutofGrid) {
@@ -172,7 +173,7 @@ const onDrop = function (ev) {
                 //Assign horizontal position
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionXEach = parseInt(positionX) + j;
-                    draggedShip.children[j].setAttribute('id', `${positionXEach}-${positionY}`)
+                    draggedShip.children[j].setAttribute('id', `${positionXEach}-${positionY}-player`)
                 }
             } else {
                 let shipEndPosition = yLetter.indexOf(positionY) + draggedShip.children.length;
@@ -183,7 +184,7 @@ const onDrop = function (ev) {
                 // Assign verticle position
                 for (j = 0; j < draggedShip.children.length; j++) {
                     let positionYEach = yLetter[yLetter.indexOf(positionY) + j];
-                    draggedShip.children[j].setAttribute('id', `${positionX}-${positionYEach}`)
+                    draggedShip.children[j].setAttribute('id', `${positionX}-${positionYEach}-player`)
                 }
             }
         }
@@ -196,6 +197,7 @@ const onDrop = function (ev) {
     console.log(ev.target.getAttribute("data-Y"))
 }
 
+//Drag start; assign dragover and drop events to the target area, later remove to prevent drag other stuffs inside;
 ships.forEach(ship => {
     ship.addEventListener('dragstart', function (ev) {
         ev.dataTransfer.setData("text/plain", ev.target.id)
