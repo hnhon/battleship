@@ -6,13 +6,48 @@ const newGame = document.querySelector('#new-game');
 const start = document.querySelector('#start');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
 
+//Ship State 
+let fleets = [
+    {
+        name: 'carrier',
+        length: 5,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'battleship',
+        length: 4,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'destroyer1',
+        length: 3,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'destroyer2',
+        length: 3,
+        isHorizontal: true,
+        isTaken: false,
+    },
+    {
+        name: 'patrol-boat',
+        length: 2,
+        isHorizontal: true,
+        isTaken: false,
+    }
+]
+
 //Create smaller grids inside larger grids
-function createGrid(grid) {
+function createGrid(grid, whosGrid) {
     for (i = 0; i < 100; i++) {
         let div = document.createElement('div');
         grid.appendChild(div);
         div.style.height = '40px';
         div.style.width = '40px';
+        div.setAttribute('class', 'smaller-grid')
         //Assign data attribute to the borad for coordination;
         //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
         let dataX = (i + 1) % 10;
@@ -23,11 +58,27 @@ function createGrid(grid) {
         let dataYLetter = yLetter[(dataYNumber)]
         div.setAttribute('data-x', dataX)
         div.setAttribute('data-y', dataYLetter)
+        div.setAttribute('position', dataX+dataYLetter+'-'+whosGrid)
     }
 };
 
-createGrid(grids[0]);
-createGrid(grids[1]);
+createGrid(grids[0], 'player');
+createGrid(grids[1], 'computer');
+
+//Set the state of small grids consisting of the board
+const smallerGrids = document.querySelectorAll('.smaller-grid');
+let smallerGridStates = [];
+smallerGrids.forEach(el => {
+    smallerGridStates = [...smallerGridStates, {
+        name: el.getAttribute('position'),
+        isOverlaped: false
+    }]
+})
+
+// Set each individual grid(.smaller-grid) of a board isOverlaped state
+function setIsOverlaped () {
+}
+
 
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
@@ -93,41 +144,6 @@ ships.forEach(ship => {
     })
 })
 
-//Ship State 
-let fleets = [
-    {
-        name: 'carrier',
-        length: 5,
-        isHorizontal: true,
-        isTaken: false,
-    },
-    {
-        name: 'battleship',
-        length: 4,
-        isHorizontal: true,
-        isTaken: false,
-    },
-    {
-        name: 'destroyer1',
-        length: 3,
-        isHorizontal: true,
-        isTaken: false,
-    },
-    {
-        name: 'destroyer2',
-        length: 3,
-        isHorizontal: true,
-        isTaken: false,
-    },
-    {
-        name: 'patrol-boat',
-        length: 2,
-        isHorizontal: true,
-        isTaken: false,
-    }
-]
-
-//Position 
 
 
 // Drag and Drop ships
