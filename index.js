@@ -79,13 +79,19 @@ function createGrid(grid, whosGrid) {
 createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
+//Debug => check fleets state
+newGame.addEventListener('click', function() {
+    fleets.forEach(el=>{
+        console.log (el.name + ': ' + el.position)
+    })
+})
+
 //Put position of occupied grids (the same as id of smaller grids of each ship) to the occupy array
 let occupied = []; 
 function updateOccupiedPosition() {   
     occupied = [];
     fleets.forEach(fleet => {
         occupied.push(...fleet.position)
-        console.log(fleet.position)
     })
 }
 //Update fleets position state
@@ -240,7 +246,7 @@ const onDrop = function (ev) {
     //Update occupy array
     updateOccupiedPosition()
     //For debug
-    console.log(occupied)
+    console.log('occupied positions: ' + occupied)
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
 }
@@ -249,17 +255,6 @@ const onDrop = function (ev) {
 ships.forEach(ship => {
     ship.addEventListener('dragstart', function (ev) {
         ev.dataTransfer.setData("text/plain", ev.target.id)
-        let draggedShip = ev.target;
-        // let prevId = [];
-        // for (i = 0; i < draggedShip.children.length; i++) {
-        //     prevId = [...prevId, draggedShip.children[i].getAttribute('id')]
-        // }
-        // if (prevId[0] !== null) {
-        //     prevId.forEach(prevId => {
-        //         occupied.splice(occupied.indexOf(prevId), 1);
-        //     })
-        // }
-        // console.log(prevId)
         playerGrid.addEventListener('dragover', dragOver)
         playerGrid.addEventListener('drop', onDrop)
     });
