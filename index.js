@@ -136,7 +136,7 @@ ships.forEach(ship => {
             ship.classList.toggle(`${shipName}-verticle`);
         }
 
-        //Check if rotate outside
+        //Rotate inside gird
         if (ship.parentElement.getAttribute('data-X') !== null) {
             let positionX = ship.parentElement.getAttribute("data-X");
             let positionY = ship.parentElement.getAttribute("data-Y");
@@ -154,6 +154,21 @@ ships.forEach(ship => {
                     fleetLength = el.length
                 }
             })
+
+            //Check if occupied
+            let newArr = [];
+            if (newOrientation == 'hoz') {
+                for (i = 0; i < fleetLength-1; i++) {
+                    newArr = [...newArr, `${parseInt(positionX)+i+1}-${positionY}-player`]
+                }
+            } else if (newOrientation == 'vert') {
+                for (i = 0; i < fleetLength-1; i++) {
+                    newArr = [...newArr, `${positionX}-${yLetter[yLetter.indexOf(positionY) + i + 1]}-player`]
+                }
+            }
+            if (checkOccupied(shipName, newArr)) {
+                return
+            }
             //Check if out of board, if not assign arg to following
             if (newOrientation == 'hoz') {
                 if ((parseInt(positionX) + fleetLength - 1) > 10) {
@@ -176,10 +191,11 @@ ships.forEach(ship => {
                     fleet.isHorizontal = !fleet.isHorizontal;
                 }
             })
+            updateShipPositionState(shipName, newArr)
             assignIdtoGridofShip(ship.children, positionX, positionY, isHorizontal)
-            ship.classList.toggle(`${shipName}-verticle`);       
+            ship.classList.toggle(`${shipName}-verticle`);
         }
-        
+
         //Rotate while inside of the board
         //Assign positon to each child of ship when rotate inside the board
         // if (ship.parentElement.getAttribute('data-X') !== null) {
