@@ -76,17 +76,8 @@ newGame.addEventListener('click', function () {
     fleets.forEach(el => {
         console.log(el.name + ': ' + el.position)
     })
-    console.log('occupied array: ' + occupied)
 })
 
-//Put position of occupied grids (the same as id of smaller grids of each ship) to the occupy array
-let occupied = [];
-function updateOccupiedPosition() {
-    occupied = [];
-    fleets.forEach(fleet => {
-        occupied.push(...fleet.position)
-    })
-}
 //Update fleets position state
 function updateShipPositionState(shipName, shipPosition) {
     //prevent add null to the positon state
@@ -98,11 +89,6 @@ function updateShipPositionState(shipName, shipPosition) {
             fleet.position = shipPosition
         }
     })
-}
-
-//Check if the new position is occupied
-function checkOccupied() {
-
 }
 
 //Rotate ships; Change Ship isHorizontal State
@@ -185,23 +171,19 @@ const onDrop = function (ev) {
     while (t !== null && !t.classList.contains('smaller-grid')) {
         t = t.parentNode
     }
-    // console.log(t.getAttribute('data-X') + '-' + t.getAttribute('data-Y'))
     //Important: get the position from the borad grid; not from the direct parent; Get Drop Area Position from the first child position of the ship 
     let positionX = t.getAttribute("data-X");
     let positionY = t.getAttribute("data-Y");
     //Get Drop Area Position base on horizontal or vertible for all childs of ship
-    let shipOrientation;
     let allPosition = [];
     fleets.forEach(el => {
         if (el.name == draggedShip.getAttribute('id')) {
             if (el.isHorizontal) {
-                shipOrientation = 'horizontal'
                 allPosition = [`${parseInt(positionX)}-${positionY}-player`]
                 for (i = 0; i < el.length - 1; i++) {
                     allPosition.push(`${parseInt(positionX) + i + 1}-${positionY}-player`)
                 }
             } else {
-                shipOrientation = 'verticle'
                 allPosition = [`${positionX}-${positionY}-player`]
                 for (i = 0; i < el.length - 1; i++) {
                     allPosition.push(`${positionX}-${yLetter[yLetter.indexOf(positionY) + i + 1]}-player`)
@@ -269,8 +251,6 @@ const onDrop = function (ev) {
     })
     //Update dragged ship position state
     updateShipPositionState(draggedShip.getAttribute('id'), shipArr)
-    //Update occupy array
-    updateOccupiedPosition()
     //For debug
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
