@@ -1,11 +1,12 @@
 const grids = document.querySelectorAll('.grid');
 const ships = document.querySelectorAll('.ship');
-const shipSmallerGrids = document.querySelectorAll('.ship-smaller-grid')
+const shipSmallerGrids = document.querySelectorAll('.ship-smaller-grid');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
 const newGame = document.querySelector('#new-game');
 const start = document.querySelector('#start');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
+let occupied = [];
 
 //Ship State 
 let fleets = [
@@ -14,30 +15,35 @@ let fleets = [
         length: 5,
         isHorizontal: true,
         isTaken: false,
+        position: []
     },
     {
         name: 'battleship',
         length: 4,
         isHorizontal: true,
         isTaken: false,
+        position: []
     },
     {
         name: 'destroyer1',
         length: 3,
         isHorizontal: true,
         isTaken: false,
+        position: []
     },
     {
         name: 'destroyer2',
         length: 3,
         isHorizontal: true,
         isTaken: false,
+        position: []
     },
     {
         name: 'patrol-boat',
         length: 2,
         isHorizontal: true,
         isTaken: false,
+        position: []
     }
 ]
 
@@ -67,19 +73,25 @@ createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
 //Set the state of small grids consisting of the board
-const smallerGrids = document.querySelectorAll('.smaller-grid');
-let smallerGridStates = [];
-smallerGrids.forEach(el => {
-    smallerGridStates = [...smallerGridStates, {
-        name: el.getAttribute('position'),
-        isOverlaped: false
-    }]
-})
 
-// Set each individual grid(.smaller-grid) of a board isOverlaped state
-function setIsOverlaped() {
+//Put position of occupied grids (the same as id of smaller grids of each ship) to the occupy array
+function occupiedPosition(arr) {
+    occupied = [...occupied, arr]
 }
-
+//Check if the new position is occupied
+function checkOccupied(draggedShipArr) {
+    let isOccupied
+    draggedShipArr.forEach(el => {
+        let checker = occupied.indexOf(el);
+        if (checker>=0) {
+            isOccupied = true
+        }
+        if (isOccupied) {
+            return
+        }
+    })
+    return isOccupied;
+}
 
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
@@ -189,9 +201,11 @@ const onDrop = function (ev) {
             }
         }
     })
+
     if (isOutofGrid) {
         return
     }
+
     ev.target.appendChild(draggedShip)
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
@@ -201,12 +215,17 @@ const onDrop = function (ev) {
 ships.forEach(ship => {
     ship.addEventListener('dragstart', function (ev) {
         ev.dataTransfer.setData("text/plain", ev.target.id)
-        let shipName = ev.target.getAttribute('id');
-        fleets.forEach(ship => {
-            if (ship.name == shipName) {
-                let shipLenght = ship.length;
-            }
-        })
+        let draggedShip = ev.target;
+        let prevId = [];
+        for (i = 0; i < draggedShip.children.length; i++) {
+            prevId = [...prevId, draggedShip.children[i].getAttribute('id')]
+        }
+        if (prevId[0] !== null) {
+            prevId.forEach(prevId => {
+                occupied.splice(occupied.indexOf(prevId), 1);
+            })
+        }
+        console.log(prevId)
         playerGrid.addEventListener('dragover', dragOver)
         playerGrid.addEventListener('drop', onDrop)
     });
