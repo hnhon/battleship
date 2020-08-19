@@ -180,16 +180,20 @@ const onDrop = function (ev) {
     let draggedShip = document.getElementById(data);
     //to later check if ship out of grid
     let isOutofGrid;
-    // Get Drop Area Position from the first child position of the ship
-    let positionX = ev.target.getAttribute("data-X");
-    let positionY = ev.target.getAttribute("data-Y");
+    //Get the correct drop area
+    let t = ev.target;
+    while (t !== null && !t.classList.contains('smaller-grid')) {
+        t = t.parentNode
+    }
+    // console.log(t.getAttribute('data-X') + '-' + t.getAttribute('data-Y'))
+    //Important: get the position from the borad grid; not from the direct parent; Get Drop Area Position from the first child position of the ship 
+    let positionX = t.getAttribute("data-X");
+    let positionY = t.getAttribute("data-Y");
     //Get Drop Area Position base on horizontal or vertible for all childs of ship
     let shipOrientation;
     let allPosition = [];
-    let shipLength = 0;
     fleets.forEach(el => {
         if (el.name == draggedShip.getAttribute('id')) {
-            shipLength = el.length
             if (el.isHorizontal) {
                 shipOrientation = 'horizontal'
                 allPosition = [`${parseInt(positionX)}-${positionY}-player`]
@@ -216,12 +220,14 @@ const onDrop = function (ev) {
     allPosition.forEach(el => {
         if (checker.indexOf(el) >= 0) {
             isOccupied = true
-            if (isOccupied) {
-                return 
-            }
         }
     })
-    // Assign position id to ship
+
+    if (isOccupied) {
+        return
+    }
+
+    // Assign position id to ship if it's inside the board
     fleets.forEach(ship => {
         if (ship.name == data) {
             if (ship.isHorizontal) {
@@ -266,7 +272,6 @@ const onDrop = function (ev) {
     //Update occupy array
     updateOccupiedPosition()
     //For debug
-    // console.log('occupied positions: ' + occupied)
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
 }
