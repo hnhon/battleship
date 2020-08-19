@@ -5,7 +5,7 @@ const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
 const newGame = document.querySelector('#new-game');
 const start = document.querySelector('#start');
-const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
+const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 //Ship State 
 let fleets = [
@@ -185,33 +185,42 @@ const onDrop = function (ev) {
     let positionY = ev.target.getAttribute("data-Y");
     //Get Drop Area Position base on horizontal or vertible for all childs of ship
     let shipOrientation;
-    let allPostion = [];
+    let allPosition = [];
     let shipLength = 0;
     fleets.forEach(el => {
         if (el.name == draggedShip.getAttribute('id')) {
             shipLength = el.length
             if (el.isHorizontal) {
                 shipOrientation = 'horizontal'
-                allPostion = [`${positionX}-${positionY}-player`]
+                allPosition = [`${parseInt(positionX)}-${positionY}-player`]
                 for (i = 0; i < el.length - 1; i++) {
-                    allPostion.push(`${positionX + i + 1}-${positionY}-player`)
+                    allPosition.push(`${parseInt(positionX) + i + 1}-${positionY}-player`)
                 }
             } else {
                 shipOrientation = 'verticle'
-                allPostion = [`${positionX}-${positionY}-player`]
+                allPosition = [`${positionX}-${positionY}-player`]
                 for (i = 0; i < el.length - 1; i++) {
-                    allPostion.push(`${positionX}-${yLetter[yLetter.indexOf(positionY) + i + 1]}-player`)
+                    allPosition.push(`${positionX}-${yLetter[yLetter.indexOf(positionY) + i + 1]}-player`)
                 }
             }
         }
     })
-    if (shipOrientation == 'horizontal') {
-
-    } else if (shipOrientation == 'verticle') {
-
-    }
     //Check if position is occupied
-
+    let checker = []
+    let isOccupied = false;
+    fleets.forEach(el => {
+        if (el.name !== draggedShip.getAttribute('id')) {
+            checker = [...checker, ...el.position]
+        }
+    })
+    allPosition.forEach(el => {
+        if (checker.indexOf(el) >= 0) {
+            isOccupied = true
+            if (isOccupied) {
+                return 
+            }
+        }
+    })
     // Assign position id to ship
     fleets.forEach(ship => {
         if (ship.name == data) {
