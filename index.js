@@ -103,6 +103,23 @@ function assignIdtoGridofShip(ship, startX, startY, isHorizontal) {
         }
     }
 }
+//Check if occupied 
+function checkOccupied(shipName, newArr) {
+    let checker = []
+    let isOccupied = false;
+    fleets.forEach(el => {
+        if (el.name !== shipName) {
+            checker = [...checker, ...el.position]
+        }
+    })
+    newArr.forEach(el => {
+        if (checker.indexOf(el) >= 0) {
+            isOccupied = true
+        }
+    })
+    return isOccupied
+}
+
 
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
@@ -263,7 +280,6 @@ const onDrop = function (ev) {
             isOccupied = true
         }
     })
-
     if (isOccupied) {
         return
     }
