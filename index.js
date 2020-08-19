@@ -72,18 +72,27 @@ function createGrid(grid, whosGrid) {
 createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
-//Set the state of small grids consisting of the board
-
 //Put position of occupied grids (the same as id of smaller grids of each ship) to the occupy array
-function occupiedPosition(arr) {
-    occupied = [...occupied, arr]
+function occupiedPosition() {
+    fleets.forEach(fleet => {
+        occupied = [...fleet.position]
+    })
 }
+//Update fleets position state
+function updateShipPositionState (shipName, shipPosition) {
+    fleets.forEach(fleet => {
+        if (fleet.name = shipName) {
+            fleet.position = shipPosition
+        }
+    })
+}
+
 //Check if the new position is occupied
 function checkOccupied(draggedShipArr) {
     let isOccupied
     draggedShipArr.forEach(el => {
         let checker = occupied.indexOf(el);
-        if (checker>=0) {
+        if (checker >= 0) {
             isOccupied = true
         }
         if (isOccupied) {
