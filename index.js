@@ -258,7 +258,7 @@ const onDrop = function (ev) {
     let draggedShip = document.getElementById(data);
     //to later check if ship out of grid
     let isOutofGrid;
-    //Get the correct drop area
+    //Get the correct drop area// Important for not recurring adding child to parent element
     let t = ev.target;
     while (t !== null && !t.classList.contains('smaller-grid')) {
         t = t.parentNode
@@ -333,8 +333,10 @@ const onDrop = function (ev) {
         return
     }
 
+    //Debug
+    console.log(ev.target)
     //Drop ship and update state
-    ev.target.appendChild(draggedShip)
+    t.appendChild(draggedShip)
     //Pass dragged ship position as array for updateShipPositionState, updateOccupiedPosition function
     let shipArr = [];
     Array.from(draggedShip.children).forEach(el => {
@@ -343,8 +345,8 @@ const onDrop = function (ev) {
     //Update dragged ship position state
     updateShipPositionState(draggedShip.getAttribute('id'), shipArr)
     //For debug
-    console.log(ev.target.getAttribute("data-X"))
-    console.log(ev.target.getAttribute("data-Y"))
+    console.log(t.getAttribute("data-X"))
+    console.log(t.getAttribute("data-Y"))
 }
 
 //Drag start; assign dragover and drop events to the target area, later remove to prevent drag other stuffs inside;
