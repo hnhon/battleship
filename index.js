@@ -158,12 +158,12 @@ ships.forEach(ship => {
             //Check if occupied
             let newArr = [];
             if (newOrientation == 'hoz') {
-                for (i = 0; i < fleetLength-1; i++) {
-                    newArr = [...newArr, `${parseInt(positionX)+i+1}-${positionY}-player`]
+                for (i = 0; i < fleetLength; i++) {
+                    newArr = [...newArr, `${parseInt(positionX)+i}-${positionY}-player`]
                 }
             } else if (newOrientation == 'vert') {
-                for (i = 0; i < fleetLength-1; i++) {
-                    newArr = [...newArr, `${positionX}-${yLetter[yLetter.indexOf(positionY) + i + 1]}-player`]
+                for (i = 0; i < fleetLength; i++) {
+                    newArr = [...newArr, `${positionX}-${yLetter[yLetter.indexOf(positionY) + i]}-player`]
                 }
             }
             if (checkOccupied(shipName, newArr)) {
