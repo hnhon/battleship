@@ -7,14 +7,6 @@ const newGame = document.querySelector('#new-game');
 const start = document.querySelector('#start');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
 
-ships.forEach(ship => {
-    ship.addEventListener('click', function () {
-        fleets.forEach(fleet => {
-            console.log(fleet.name + ': ' + fleet.position)
-        })
-    })
-})
-
 //Ship State 
 let fleets = [
     {
@@ -79,16 +71,17 @@ function createGrid(grid, whosGrid) {
 createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
-//Debug => check fleets state
-newGame.addEventListener('click', function() {
-    fleets.forEach(el=>{
-        console.log (el.name + ': ' + el.position)
+//Debug => check fleets state and occupy state
+newGame.addEventListener('click', function () {
+    fleets.forEach(el => {
+        console.log(el.name + ': ' + el.position)
     })
+    console.log('occupied array: ' + occupied)
 })
 
 //Put position of occupied grids (the same as id of smaller grids of each ship) to the occupy array
-let occupied = []; 
-function updateOccupiedPosition() {   
+let occupied = [];
+function updateOccupiedPosition() {
     occupied = [];
     fleets.forEach(fleet => {
         occupied.push(...fleet.position)
@@ -108,18 +101,8 @@ function updateShipPositionState(shipName, shipPosition) {
 }
 
 //Check if the new position is occupied
-function checkOccupied(draggedShipArr) {
-    let isOccupied
-    draggedShipArr.forEach(el => {
-        let checker = occupied.indexOf(el);
-        if (checker >= 0) {
-            isOccupied = true
-        }
-        if (isOccupied) {
-            return
-        }
-    })
-    return isOccupied;
+function checkOccupied() {
+
 }
 
 //Rotate ships; Change Ship isHorizontal State
@@ -186,8 +169,6 @@ ships.forEach(ship => {
     })
 })
 
-
-
 // Drag and Drop ships
 const dragOver = function (ev) {
     ev.preventDefault();
@@ -202,6 +183,35 @@ const onDrop = function (ev) {
     // Get Drop Area Position from the first child position of the ship
     let positionX = ev.target.getAttribute("data-X");
     let positionY = ev.target.getAttribute("data-Y");
+    //Get Drop Area Position base on horizontal or vertible for all childs of ship
+    let shipOrientation;
+    let allPostion = [];
+    let shipLength = 0;
+    fleets.forEach(el => {
+        if (el.name == draggedShip.getAttribute('id')) {
+            shipLength = el.length
+            if (el.isHorizontal) {
+                shipOrientation = 'horizontal'
+                allPostion = [`${positionX}-${positionY}-player`]
+                for (i = 0; i < el.length - 1; i++) {
+                    allPostion.push(`${positionX + i + 1}-${positionY}-player`)
+                }
+            } else {
+                shipOrientation = 'verticle'
+                allPostion = [`${positionX}-${positionY}-player`]
+                for (i = 0; i < el.length - 1; i++) {
+                    allPostion.push(`${positionX}-${yLetter[yLetter.indexOf(positionY) + i + 1]}-player`)
+                }
+            }
+        }
+    })
+    if (shipOrientation == 'horizontal') {
+
+    } else if (shipOrientation == 'verticle') {
+
+    }
+    //Check if position is occupied
+
     // Assign position id to ship
     fleets.forEach(ship => {
         if (ship.name == data) {
@@ -235,8 +245,9 @@ const onDrop = function (ev) {
         return
     }
 
+    //Drop ship and update state
     ev.target.appendChild(draggedShip)
-    //Pass dragged ship position as array for update function
+    //Pass dragged ship position as array for updateShipPositionState, updateOccupiedPosition function
     let shipArr = [];
     Array.from(draggedShip.children).forEach(el => {
         shipArr = [...shipArr, el.getAttribute('id')]
@@ -246,7 +257,7 @@ const onDrop = function (ev) {
     //Update occupy array
     updateOccupiedPosition()
     //For debug
-    console.log('occupied positions: ' + occupied)
+    // console.log('occupied positions: ' + occupied)
     console.log(ev.target.getAttribute("data-X"))
     console.log(ev.target.getAttribute("data-Y"))
 }
