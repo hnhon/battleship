@@ -167,19 +167,19 @@ ships.forEach(ship => {
                 } else {
                     isHorizontal = false
                 }
-            };
-            if (isOutofGrid) {
-                return
-            }
-            fleets.forEach(fleet => {
-                if (fleet.name == shipName) {
-                    fleet.isHorizontal = !fleet.isHorizontal;
-                }
-            })
-            ship.classList.toggle(`${shipName}-verticle`);
-            assignIdtoGridofShip(ship.children, positionX, positionY, isHorizontal)
+            };            
         }
 
+        if (isOutofGrid) {
+            return
+        }
+        fleets.forEach(fleet => {
+            if (fleet.name == shipName) {
+                fleet.isHorizontal = !fleet.isHorizontal;
+            }
+        })
+        ship.classList.toggle(`${shipName}-verticle`);
+        assignIdtoGridofShip(ship.children, positionX, positionY, isHorizontal)
         //Rotate while inside of the board
         //Assign positon to each child of ship when rotate inside the board
         // if (ship.parentElement.getAttribute('data-X') !== null) {
