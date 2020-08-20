@@ -47,10 +47,10 @@ let fleets = [
 ]
 
 let shipsPositions = {
-    who: fleets, 
+    who: fleets,
     getPosition() {
-        let arr = []; 
-        this.who.forEach(el=> {
+        let arr = [];
+        this.who.forEach(el => {
             arr = [...arr, ...el.position]
         })
         return arr
@@ -333,8 +333,8 @@ ships.forEach(ship => {
 //Computer Part
 
 //Computer Fleets State
-function cmptrIsHorizontal () {
-    return Math.floor(Math.random(0, 1) * 2)? true: false
+function cmptrIsHorizontal() {
+    return Math.floor(Math.random(0, 1) * 2) ? true : false
 }
 
 let cmptrFleets = [
@@ -375,7 +375,7 @@ let cmptrFleets = [
     }
 ]
 //Debug
-cmptrFleets.forEach(el=> {
+cmptrFleets.forEach(el => {
     console.log(el.name + ' is horizontal: ' + el.isHorizontal)
 })
 
@@ -383,29 +383,24 @@ cmptrFleets.forEach(el=> {
 let cmptrShipsPositions = Object.create(shipsPositions)
 cmptrShipsPositions.who = cmptrFleets
 
-
 //Computer Generate Ships
-function generateShip(height, width, dir) {
-    let div = document.createElement('div');
-    computerGrid.appendChild(div);
-    div.style.borderRadius = '20%'
-    div.style.backgroundColor = 'pink'
-    //change ship direction
-    if (dir == 0) {
-        div.style.width = width;
-        div.style.height = height
-    } else {
-        div.style.width = height;
-        div.style.height = width;
+cmptrFleets.forEach(fleet => {
+    let containerDiv = document.createElement('div');
+    containerDiv.setAttribute('id', fleet.name);
+    let height = 40 * 1 + 40 * (fleet.isHorizontal ? 0 : fleet.length-1);
+    let width = 40 * 1 + 40 * (fleet.isHorizontal ? fleet.length-1 : 0);
+    containerDiv.style.height = height+'px';
+    containerDiv.style.width = width+'px';
+    containerDiv.style.display = 'flex'
+    containerDiv.style.backgroundColor = 'pink'
+    containerDiv.style.borderRadius = '20%'
+    if (!fleet.isHorizontal) {
+        containerDiv.style.flexDirection = 'column'
     }
-}
-
-function dir() {
-    return Math.floor(Math.random(0, 1) * 2)
-}
-
-generateShip('200px', '40px', dir());
-generateShip('160px', '40px', dir());
-generateShip('120px', '40px', dir());
-generateShip('120px', '40px', dir());
-generateShip('80px', '40px', dir());
+    for (i=0; i<fleet.length; i++) {
+        let smallerDiv = document.createElement('div');
+        smallerDiv.style.height = '40px'
+        smallerDiv.style.width = '40px'
+    }
+    computerGrid.appendChild(containerDiv)
+})
