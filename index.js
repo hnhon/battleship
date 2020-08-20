@@ -94,12 +94,12 @@ newGame.addEventListener('click', function () {
 
 
 //Update fleets position state
-function updateShipPositionState(shipName, shipPosition) {
+function updateShipPositionState(shipName, shipPosition, who) {
     //prevent add null to the positon state
     if (shipPosition.indexOf(null) >= 0) {
         return
     }
-    fleets.forEach(fleet => {
+    who.forEach(fleet => {
         if (fleet.name == shipName) {
             fleet.position = shipPosition
         }
@@ -206,7 +206,7 @@ ships.forEach(ship => {
                     fleet.isHorizontal = !fleet.isHorizontal;
                 }
             })
-            updateShipPositionState(shipName, newArr)
+            updateShipPositionState(shipName, newArr, fleets)
             assignIdtoGridofShip(ship.children, positionX, positionY, isHorizontal)
             ship.classList.toggle(`${shipName}-verticle`);
         }
@@ -306,10 +306,7 @@ const onDrop = function (ev) {
         shipArr = [...shipArr, el.getAttribute('id')]
     })
     //Update dragged ship position state
-    updateShipPositionState(draggedShip.getAttribute('id'), shipArr)
-    //For debug
-    console.log(t.getAttribute("data-X"))
-    console.log(t.getAttribute("data-Y"))
+    updateShipPositionState(draggedShip.getAttribute('id'), shipArr, fleets)
 }
 
 //Drag start; assign dragover and drop events to the target area, later remove to prevent drag other stuffs inside;
@@ -318,7 +315,6 @@ ships.forEach(ship => {
         ev.dataTransfer.setData("text/plain", ev.target.id)
         playerGrid.addEventListener('dragover', dragOver)
         playerGrid.addEventListener('drop', onDrop)
-        console.log(ev.target)
     });
     //Remove playerGrid dragover and drop event; Avoid player drag other item inside
     ship.addEventListener('dragend', function () {
@@ -332,14 +328,14 @@ ships.forEach(ship => {
 
 //Computer Fleets State
 function cmptrIsHorizontal() {
-    return Math.floor(Math.random(0, 1) * 2) ? true : false
+    return Math.floor(Math.random() * 2) ? false : true
 }
 
 let cmptrFleets = [
     {
         name: 'cmptrCarrier',
         length: 5,
-        isHorizontal: true,
+        isHorizontal: cmptrIsHorizontal(),
         isTaken: false,
         position: []
     },
@@ -390,6 +386,7 @@ cmptrFleets.forEach(fleet => {
     containerDiv.style.display = 'flex'
     containerDiv.style.backgroundColor = 'pink'
     containerDiv.style.borderRadius = '20%'
+    containerDiv.style.border = '4px solid red'
     if (!fleet.isHorizontal) {
         containerDiv.style.flexDirection = 'column'
     }
@@ -405,41 +402,46 @@ cmptrFleets.forEach(fleet => {
 //Computer Place Ship
 const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
 
-let isOutofGrid = true;
-while (isOutofGrid) {
-    let randomNum = Math.floor(Math.random() * 100);
-    let shipName = cmptrFleetsDiv[0].getAttribute('id')
-    let orientation;
-    let shipArr = [randomNum];
+for (i = 0; i < 5; i++) {
+    let isOutofGrid = true;
+    let isOccupied = true;
+    let shipName = cmptrFleetsDiv[i].getAttribute('id')
     let shipLength;
-    cmptrFleets.forEach(fleet => {
-        if (fleet.name == shipName) {
-            orientation = fleet.isHorizontal ? 'hoz' : 'vert';
-            shipLength = fleet.length;
+    let shipArr = [];
+    let randomNum;
+    while (isOutofGrid || isOccupied) {
+        randomNum = Math.floor(Math.random() * 100);
+
+        let orientation;
+        shipArr = [randomNum];
+
+        cmptrFleets.forEach(fleet => {
+            if (fleet.name == shipName) {
+                orientation = fleet.isHorizontal ? 'hoz' : 'vert';
+                shipLength = fleet.length;
+            }
+        })
+        if (orientation == 'hoz') {
+            for (j = 0; j < shipLength - 1; j++) {
+                shipArr = [...shipArr, randomNum + j + 1]
+            }
+            let index = randomNum % 10
+            isOutofGrid = index + shipLength - 1 > 9 ? true : false;
+        } else {
+            for (j = 0; j < shipLength - 1; j++) {
+                shipArr = [...shipArr, randomNum + (j + 1) * 10]
+            }
+            let index = Math.floor(randomNum / 10);
+            isOutofGrid = index + shipLength - 1 > 9 ? true : false;
         }
-    })
-    if (orientation == 'hoz') {
-        for (j = 0; j < shipLength - 1; j++) {
-            shipArr = [...shipArr, randomNum + j + 1]
-        }
-        let index = randomNum % 10
-        isOutofGrid = index + shipLength - 1 > 9 ? true : false;
-    } else {
-        for (j = 0; j < shipLength - 1; j++) {
-            shipArr = [...shipArr, randomNum + (j + 1) * 10]
-        }
-        let index = Math.floor(randomNum / 10);
-        isOutofGrid = index + shipLength - 1 > 9 ? true : false;
+        isOccupied = checkOccupied(shipName, shipArr, cmptrFleets);
     }
-    if (!isOutofGrid) {
-        computerSmallerGrid[randomNum].appendChild(cmptrFleetsDiv[0])
-    }
+    computerSmallerGrid[randomNum].appendChild(cmptrFleetsDiv[i])
+    updateShipPositionState(shipName, shipArr, cmptrFleets)
 }
+
 
 
 
 //get occupied position array
 // let cmptrArr = cmptrShipsPositions.getPosition()
-
-//Check if occupied
-// checkOccupied()
