@@ -65,7 +65,8 @@ function createGrid(grid, whosGrid) {
         div.style.height = '40px';
         div.style.width = '40px';
         div.setAttribute('class', 'smaller-grid')
-        div.setAttribute('number', i+1)
+        div.setAttribute('number', i)
+        div.classList.add(`${whosGrid}-smaller-grid`)
         //Assign data attribute to the borad for coordination;
         //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
         let dataX = (i + 1) % 10;
@@ -86,7 +87,7 @@ createGrid(grids[1], 'computer');
 //Debug => check fleets state
 
 newGame.addEventListener('click', function () {
-console.log('test')
+    console.log(shipsPositions.getPosition())
 })
 
 //Mouse Over board (for selecting ship instead of the board grid)
@@ -338,7 +339,7 @@ let cmptrFleets = [
     {
         name: 'cmptrCarrier',
         length: 5,
-        isHorizontal: cmptrIsHorizontal(),
+        isHorizontal: true,
         isTaken: false,
         position: []
     },
@@ -377,30 +378,68 @@ let cmptrShipsPositions = Object.create(shipsPositions)
 cmptrShipsPositions.who = cmptrFleets
 
 //Computer Generate Ships
+let cmptrFleetsDiv = []
+
 cmptrFleets.forEach(fleet => {
     let containerDiv = document.createElement('div');
     containerDiv.setAttribute('id', fleet.name);
-    let height = 40 * 1 + 40 * (fleet.isHorizontal ? 0 : fleet.length-1);
-    let width = 40 * 1 + 40 * (fleet.isHorizontal ? fleet.length-1 : 0);
-    containerDiv.style.height = height+'px';
-    containerDiv.style.width = width+'px';
+    let height = 40 * 1 + 40 * (fleet.isHorizontal ? 0 : fleet.length - 1);
+    let width = 40 * 1 + 40 * (fleet.isHorizontal ? fleet.length - 1 : 0);
+    containerDiv.style.height = height + 'px';
+    containerDiv.style.width = width + 'px';
     containerDiv.style.display = 'flex'
     containerDiv.style.backgroundColor = 'pink'
     containerDiv.style.borderRadius = '20%'
     if (!fleet.isHorizontal) {
         containerDiv.style.flexDirection = 'column'
     }
-    for (i=0; i<fleet.length; i++) {
+    for (i = 0; i < fleet.length; i++) {
         let smallerDiv = document.createElement('div');
         smallerDiv.style.height = '40px';
         smallerDiv.style.width = '40px';
         containerDiv.appendChild(smallerDiv);
     }
+    cmptrFleetsDiv = [...cmptrFleetsDiv, containerDiv]
 })
-//get occupied position array
-let cmptrArr = cmptrShipsPositions.getPosition()
 
 //Computer Place Ship
-cmptrFleets.forEach(fleet=> {
+const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
 
-})
+let isOutofGrid = true;
+while (isOutofGrid) {
+    let randomNum = Math.floor(Math.random() * 100);
+    let shipName = cmptrFleetsDiv[0].getAttribute('id')
+    let orientation;
+    let shipArr = [randomNum];
+    let shipLength;
+    cmptrFleets.forEach(fleet => {
+        if (fleet.name == shipName) {
+            orientation = fleet.isHorizontal ? 'hoz' : 'vert';
+            shipLength = fleet.length;
+        }
+    })
+    if (orientation == 'hoz') {
+        for (j = 0; j < shipLength - 1; j++) {
+            shipArr = [...shipArr, randomNum + j + 1]
+        }
+        let index = randomNum % 10
+        isOutofGrid = index + shipLength - 1 > 9 ? true : false;
+    } else {
+        for (j = 0; j < shipLength - 1; j++) {
+            shipArr = [...shipArr, randomNum + (j + 1) * 10]
+        }
+        let index = Math.floor(randomNum / 10);
+        isOutofGrid = index + shipLength - 1 > 9 ? true : false;
+    }
+    if (!isOutofGrid) {
+        computerSmallerGrid[randomNum].appendChild(cmptrFleetsDiv[0])
+    }
+}
+
+
+
+//get occupied position array
+// let cmptrArr = cmptrShipsPositions.getPosition()
+
+//Check if occupied
+// checkOccupied()
