@@ -46,6 +46,17 @@ let fleets = [
     }
 ]
 
+let playerShipsPositions = {
+    whosGrid: fleets, 
+    getPosition() {
+        let arr = []; 
+        this.whosGrid.forEach(el=> {
+            arr = [...arr, ...el.position]
+        })
+        return arr
+    }
+}
+
 //Create smaller grids inside larger grids
 function createGrid(grid, whosGrid) {
     for (i = 0; i < 100; i++) {
@@ -76,6 +87,7 @@ newGame.addEventListener('click', function () {
     fleets.forEach(el => {
         console.log(el.name + ': ' + el.position + ' isHorz?: ' + el.isHorizontal)
     })
+    console.log(playerShipsPositions.getPosition())
 })
 
 //Update fleets position state
@@ -159,7 +171,7 @@ ships.forEach(ship => {
             let newArr = [];
             if (newOrientation == 'hoz') {
                 for (i = 0; i < fleetLength; i++) {
-                    newArr = [...newArr, `${parseInt(positionX)+i}-${positionY}-player`]
+                    newArr = [...newArr, `${parseInt(positionX) + i}-${positionY}-player`]
                 }
             } else if (newOrientation == 'vert') {
                 for (i = 0; i < fleetLength; i++) {
@@ -283,9 +295,6 @@ const onDrop = function (ev) {
     if (isOutofGrid) {
         return
     }
-
-    //Debug
-    console.log(ev.target)
     //Drop ship and update state
     t.appendChild(draggedShip)
     //Pass dragged ship position as array for updateShipPositionState, updateOccupiedPosition function
