@@ -399,8 +399,9 @@ cmptrFleets.forEach(fleet => {
     }
     for (i=0; i<fleet.length; i++) {
         let smallerDiv = document.createElement('div');
-        smallerDiv.style.height = '40px'
-        smallerDiv.style.width = '40px'
+        smallerDiv.style.height = '40px';
+        smallerDiv.style.width = '40px';
+        containerDiv.appendChild(smallerDiv);
     }
     computerGrid.appendChild(containerDiv)
 })
