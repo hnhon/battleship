@@ -87,8 +87,11 @@ newGame.addEventListener('click', function () {
     fleets.forEach(el => {
         console.log(el.name + ': ' + el.position + ' isHorz?: ' + el.isHorizontal)
     })
-    console.log(playerShipsPositions.getPosition())
+    console.log('player: ' + playerShipsPositions.getPosition())
 })
+
+//Mouse Over board (for selecting ship instead of the board grid)
+
 
 //Update fleets position state
 function updateShipPositionState(shipName, shipPosition) {
@@ -315,6 +318,7 @@ ships.forEach(ship => {
         ev.dataTransfer.setData("text/plain", ev.target.id)
         playerGrid.addEventListener('dragover', dragOver)
         playerGrid.addEventListener('drop', onDrop)
+        console.log(ev.target)
     });
     //Remove playerGrid dragover and drop event; Avoid player drag other item inside
     ship.addEventListener('dragend', function () {
