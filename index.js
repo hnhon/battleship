@@ -46,11 +46,11 @@ let fleets = [
     }
 ]
 
-let playerShipsPositions = {
-    whosGrid: fleets, 
+let shipsPositions = {
+    who: fleets, 
     getPosition() {
         let arr = []; 
-        this.whosGrid.forEach(el=> {
+        this.who.forEach(el=> {
             arr = [...arr, ...el.position]
         })
         return arr
@@ -83,11 +83,13 @@ createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
 //Debug => check fleets state
+
 newGame.addEventListener('click', function () {
     fleets.forEach(el => {
         console.log(el.name + ': ' + el.position + ' isHorz?: ' + el.isHorizontal)
     })
-    console.log('player: ' + playerShipsPositions.getPosition())
+    console.log('player: ' + shipsPositions.getPosition())
+    console.log('cmptr: ' + cmptrShipsPositions.getPosition())
 })
 
 //Mouse Over board (for selecting ship instead of the board grid)
@@ -326,6 +328,61 @@ ships.forEach(ship => {
         playerGrid.removeEventListener('drop', onDrop)
     })
 })
+
+
+//Computer Part
+
+//Computer Fleets State
+function cmptrIsHorizontal () {
+    return Math.floor(Math.random(0, 1) * 2)? true: false
+}
+
+let cmptrFleets = [
+    {
+        name: 'cmptrCarrier',
+        length: 5,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrBattleship',
+        length: 4,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrDestroyer1',
+        length: 3,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrDestroyer2',
+        length: 3,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrPatrol-boat',
+        length: 2,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    }
+]
+//Debug
+cmptrFleets.forEach(el=> {
+    console.log(el.name + ' is horizontal: ' + el.isHorizontal)
+})
+
+//Create a new computer ship positions object using shipsPositions object
+let cmptrShipsPositions = Object.create(shipsPositions)
+cmptrShipsPositions.who = cmptrFleets
+
 
 //Computer Generate Ships
 function generateShip(height, width, dir) {
