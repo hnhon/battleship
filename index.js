@@ -65,6 +65,7 @@ function createGrid(grid, whosGrid) {
         div.style.height = '40px';
         div.style.width = '40px';
         div.setAttribute('class', 'smaller-grid')
+        div.setAttribute('number', i+1)
         //Assign data attribute to the borad for coordination;
         //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
         let dataX = (i + 1) % 10;
@@ -85,11 +86,7 @@ createGrid(grids[1], 'computer');
 //Debug => check fleets state
 
 newGame.addEventListener('click', function () {
-    fleets.forEach(el => {
-        console.log(el.name + ': ' + el.position + ' isHorz?: ' + el.isHorizontal)
-    })
-    console.log('player: ' + shipsPositions.getPosition())
-    console.log('cmptr: ' + cmptrShipsPositions.getPosition())
+console.log('test')
 })
 
 //Mouse Over board (for selecting ship instead of the board grid)
@@ -121,10 +118,10 @@ function assignIdtoGridofShip(ship, startX, startY, isHorizontal) {
     }
 }
 //Check if occupied 
-function checkOccupied(shipName, newArr) {
+function checkOccupied(shipName, newArr, who) {
     let checker = []
     let isOccupied = false;
-    fleets.forEach(el => {
+    who.forEach(el => {
         if (el.name !== shipName) {
             checker = [...checker, ...el.position]
         }
@@ -183,7 +180,7 @@ ships.forEach(ship => {
                     newArr = [...newArr, `${positionX}-${yLetter[yLetter.indexOf(positionY) + i]}-player`]
                 }
             }
-            if (checkOccupied(shipName, newArr)) {
+            if (checkOccupied(shipName, newArr, fleets)) {
                 return
             }
             //Check if out of board, if not assign arg to following
@@ -374,10 +371,6 @@ let cmptrFleets = [
         position: []
     }
 ]
-//Debug
-cmptrFleets.forEach(el => {
-    console.log(el.name + ' is horizontal: ' + el.isHorizontal)
-})
 
 //Create a new computer ship positions object using shipsPositions object
 let cmptrShipsPositions = Object.create(shipsPositions)
@@ -403,5 +396,11 @@ cmptrFleets.forEach(fleet => {
         smallerDiv.style.width = '40px';
         containerDiv.appendChild(smallerDiv);
     }
-    computerGrid.appendChild(containerDiv)
+})
+//get occupied position array
+let cmptrArr = cmptrShipsPositions.getPosition()
+
+//Computer Place Ship
+cmptrFleets.forEach(fleet=> {
+
 })
