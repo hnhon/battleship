@@ -489,13 +489,21 @@ function handlePlayerPick(e) {
     }
     //Check if hit
     let isHit = false;
+    checkHit(t.getAttribute('number'), player);
     //Styling
     t.style.backgroundColor = isHit? 'red' : '#ac9cd9';
     //Check if win
     //Swap player
     player = 'computer'
     //Computer acctact
-    setTimeout(cpuAttack(), 5000)
+    setTimeout(cpuAttack, 2000)
+}
+
+function checkHit (id, player) {
+    let checker = [];
+    checker = (player == 'player')? computerShipPosition: playerShipPosition
+    let isHit = checker.some(position=>position==id)
+    console.log(isHit)
 }
 
 function cpuAttack() {
@@ -504,6 +512,8 @@ function cpuAttack() {
     let dataY = yLetter[Math.floor(randomNum / 10)]
     //Check if hit
     let isHit = false;
+    let id = `${dataX}-${dataY}-player`
+    checkHit (id, player)
     //Styling
     playerSmallerGrid[randomNum].style.backgroundColor = isHit? 'red' : '#ac9cd9';
     //Check if win
