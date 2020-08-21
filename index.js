@@ -3,9 +3,36 @@ const ships = document.querySelectorAll('.ship');
 const shipSmallerGrids = document.querySelectorAll('.ship-smaller-grid');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
-const newGame = document.querySelector('#new-game');
 const start = document.querySelector('#start');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+//Create smaller grids inside board
+function createGrid(grid, whosGrid) {
+    for (i = 0; i < 100; i++) {
+        let div = document.createElement('div');
+        grid.appendChild(div);
+        div.style.height = '40px';
+        div.style.width = '40px';
+        div.setAttribute('class', 'smaller-grid')
+        div.setAttribute('number', i)
+        div.classList.add(`${whosGrid}-smaller-grid`)
+        //Assign data attribute to the borad for coordination;
+        //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
+        let dataX = (i + 1) % 10;
+        if (dataX == 0) {
+            dataX = 10;
+        }
+        let dataYNumber = Math.floor(((i) / 10));
+        let dataYLetter = yLetter[(dataYNumber)]
+        div.setAttribute('data-x', dataX)
+        div.setAttribute('data-y', dataYLetter)
+        div.setAttribute('position', dataX + '-' + dataYLetter + '-' + whosGrid)
+    }
+};
+
+createGrid(grids[0], 'player');
+createGrid(grids[1], 'computer');
+
 
 //Ship State 
 let fleets = [
@@ -57,42 +84,6 @@ let shipsPositions = {
     }
 }
 
-//Create smaller grids inside larger grids
-function createGrid(grid, whosGrid) {
-    for (i = 0; i < 100; i++) {
-        let div = document.createElement('div');
-        grid.appendChild(div);
-        div.style.height = '40px';
-        div.style.width = '40px';
-        div.setAttribute('class', 'smaller-grid')
-        div.setAttribute('number', i)
-        div.classList.add(`${whosGrid}-smaller-grid`)
-        //Assign data attribute to the borad for coordination;
-        //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
-        let dataX = (i + 1) % 10;
-        if (dataX == 0) {
-            dataX = 10;
-        }
-        let dataYNumber = Math.floor(((i) / 10));
-        let dataYLetter = yLetter[(dataYNumber)]
-        div.setAttribute('data-x', dataX)
-        div.setAttribute('data-y', dataYLetter)
-        div.setAttribute('position', dataX + '-' + dataYLetter + '-' + whosGrid)
-    }
-};
-
-createGrid(grids[0], 'player');
-createGrid(grids[1], 'computer');
-
-//Debug => check fleets state
-
-newGame.addEventListener('click', function () {
-    console.log(shipsPositions.getPosition())
-})
-
-//Mouse Over board (for selecting ship instead of the board grid)
-
-
 //Update fleets position state
 function updateShipPositionState(shipName, shipPosition, who) {
     //prevent add null to the positon state
@@ -135,10 +126,17 @@ function checkOccupied(shipName, newArr, who) {
     return isOccupied
 }
 
+let isActiveGame = false;
+function startGame() {
+    isActiveGame = !isActiveGame
+}
 
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
     ship.addEventListener('click', function () {
+        if (isActiveGame) {
+            return
+        }
         let shipName = ship.getAttribute('id');
         let isOutofGrid;
         //Initial rotate when all ships are outside of the board
@@ -216,10 +214,16 @@ ships.forEach(ship => {
 // Drag and Drop ships
 const dragOver = function (ev) {
     ev.preventDefault();
+    if (isActiveGame) {
+        return
+    }
 }
 
 const onDrop = function (ev) {
     ev.preventDefault();
+    if (isActiveGame) {
+        return
+    }
     let data = ev.dataTransfer.getData('text/plain');
     let draggedShip = document.getElementById(data);
     //to later check if ship out of grid
@@ -311,6 +315,9 @@ const onDrop = function (ev) {
 
 //Drag start; assign dragover and drop events to the target area, later remove to prevent drag other stuffs inside;
 ships.forEach(ship => {
+    if (isActiveGame) {
+        return
+    }
     ship.addEventListener('dragstart', function (ev) {
         ev.dataTransfer.setData("text/plain", ev.target.id)
         playerGrid.addEventListener('dragover', dragOver)
@@ -323,14 +330,13 @@ ships.forEach(ship => {
     })
 })
 
-
 //Computer Part
-
 //Computer Fleets State
 function cmptrIsHorizontal() {
     return Math.floor(Math.random() * 2) ? false : true
 }
 
+//Computer fleet state
 let cmptrFleets = [
     {
         name: 'cmptrCarrier',
@@ -375,7 +381,6 @@ cmptrShipsPositions.who = cmptrFleets
 
 //Computer Generate Ships
 let cmptrFleetsDiv = []
-
 cmptrFleets.forEach(fleet => {
     let containerDiv = document.createElement('div');
     containerDiv.setAttribute('id', fleet.name);
@@ -401,7 +406,6 @@ cmptrFleets.forEach(fleet => {
 
 //Computer Place Ship
 const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
-
 for (i = 0; i < 5; i++) {
     let isOutofGrid = true;
     let isOccupied = true;
@@ -440,8 +444,38 @@ for (i = 0; i < 5; i++) {
     updateShipPositionState(shipName, shipArr, cmptrFleets)
 }
 
+//Start game logic
+let playerCounter = 0;
+let computerCounter = 0;
+let playerShipPosition = [];
+let computerShipPosition = [];
+
+start.addEventListener('click', handleStartGame)
+function handleStartGame() {
+    let checker = shipsPositions.getPosition().length;
+    if (checker !== 17) {
+        alert('place all ships')
+        return
+    }
+    else {
+        alert('game start')
+        isActiveGame = !isActiveGame
+        playerShipPosition = shipsPositions.getPosition()
+        computerShipPosition = cmptrShipsPositions.getPosition()
+    }
+}
+
+computerSmallerGrid.forEach(el => {
+    el.addEventListener('click', handlePlayerPick)
+})
+function handlePlayerPick() {
+    if (!isActiveGame) {
+        return
+    }
+    playerCounter = playerCounter + 1
+    console.log(playerCounter)
+}
 
 
 
-//get occupied position array
-// let cmptrArr = cmptrShipsPositions.getPosition()
+
