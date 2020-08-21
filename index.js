@@ -33,7 +33,6 @@ function createGrid(grid, whosGrid) {
 createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
-
 //Ship State 
 let fleets = [
     {
@@ -130,20 +129,9 @@ let isActiveGame = false;
 
 function startGame() {
     isActiveGame = !isActiveGame
-    //Active player click computer board behavior
-    computerSmallerGrid.forEach(el => {
-        el.addEventListener('click', e=>handlePlayerPick(e))
-    })
-    //Check if win
-    //Swap player
-    //End game
 }
 
-function handlePlayerPick() {
-    console.log(playerShipPosition + computerShipPosition)
-}
-
-function endGame () {
+function endGame() {
 
 }
 
@@ -465,6 +453,9 @@ let playerCounter = 0;
 let computerCounter = 0;
 let playerShipPosition = [];
 let computerShipPosition = [];
+let player = 'player'
+
+const playerSmallerGrid = document.querySelectorAll('.player-smaller-grid')
 
 start.addEventListener('click', handleStartGame)
 function handleStartGame() {
@@ -481,6 +472,44 @@ function handleStartGame() {
     }
 }
 
+computerSmallerGrid.forEach(el => {
+    el.addEventListener('click', e => handlePlayerPick(e))
+})
+
+function handlePlayerPick(e) {
+    if (!isActiveGame) {
+        return
+    }
+    if (player !== 'player') {
+        return
+    }
+    let t = e.target
+    while (t !== null && !t.classList.contains('computer-smaller-grid')) {
+        t = t.parentNode
+    }
+    //Check if hit
+    let isHit = false;
+    //Styling
+    t.style.backgroundColor = isHit? 'red' : '#ac9cd9';
+    //Check if win
+    //Swap player
+    player = 'computer'
+    //Computer acctact
+    setTimeout(cpuAttack(), 5000)
+}
+
+function cpuAttack() {
+    let randomNum = Math.floor(Math.random() * 100)
+    let dataX = (randomNum % 10) + 1;
+    let dataY = yLetter[Math.floor(randomNum / 10)]
+    //Check if hit
+    let isHit = false;
+    //Styling
+    playerSmallerGrid[randomNum].style.backgroundColor = isHit? 'red' : '#ac9cd9';
+    //Check if win
+    //Swap player
+    player = 'player'   
+}
 
 
 
