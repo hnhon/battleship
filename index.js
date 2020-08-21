@@ -127,8 +127,24 @@ function checkOccupied(shipName, newArr, who) {
 }
 
 let isActiveGame = false;
+
 function startGame() {
     isActiveGame = !isActiveGame
+    //Active player click computer board behavior
+    computerSmallerGrid.forEach(el => {
+        el.addEventListener('click', e=>handlePlayerPick(e))
+    })
+    //Check if win
+    //Swap player
+    //End game
+}
+
+function handlePlayerPick() {
+    console.log(playerShipPosition + computerShipPosition)
+}
+
+function endGame () {
+
 }
 
 //Rotate ships; Change Ship isHorizontal State
@@ -459,22 +475,13 @@ function handleStartGame() {
     }
     else {
         alert('game start')
-        isActiveGame = !isActiveGame
         playerShipPosition = shipsPositions.getPosition()
         computerShipPosition = cmptrShipsPositions.getPosition()
+        startGame()
     }
 }
 
-computerSmallerGrid.forEach(el => {
-    el.addEventListener('click', handlePlayerPick)
-})
-function handlePlayerPick() {
-    if (!isActiveGame) {
-        return
-    }
-    playerCounter = playerCounter + 1
-    console.log(playerCounter)
-}
+
 
 
 
