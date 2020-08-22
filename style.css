@@ -142,6 +142,11 @@
     flex-direction: column;
 }
 
+.computer-ship {
+    border-radius: 20%;
+    border: 4px solid blue;
+}
+
 .winning-message {
     position: fixed;
     top: 0;

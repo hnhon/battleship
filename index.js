@@ -400,14 +400,12 @@ let cmptrFleetsDiv = []
 cmptrFleets.forEach(fleet => {
     let containerDiv = document.createElement('div');
     containerDiv.setAttribute('id', fleet.name);
+    containerDiv.classList.add('computer-ship')
     let height = 40 * 1 + 40 * (fleet.isHorizontal ? 0 : fleet.length - 1);
     let width = 40 * 1 + 40 * (fleet.isHorizontal ? fleet.length - 1 : 0);
     containerDiv.style.height = height + 'px';
     containerDiv.style.width = width + 'px';
     containerDiv.style.display = 'flex'
-    // containerDiv.style.backgroundColor = 'pink'
-    containerDiv.style.borderRadius = '20%'
-    containerDiv.style.border = '4px solid red'
     if (!fleet.isHorizontal) {
         containerDiv.style.flexDirection = 'column'
     }
