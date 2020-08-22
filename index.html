@@ -9,49 +9,57 @@
 </head>
 
 <body>
-    <div class='display'>
-        <div class="score">
+    <div class='display-banner'>
+        <p>Click Ship to rotate<br>Drag to place ships<br>Press Ready to start game</p>
+        <div class="score" style="display: none;">
             <p class="player-score">You:</p>
             <p class="computer-score">Computer:</p>
         </div>
-        <button id='start'>Ready</button>
+        <button class="ready-btn" id='start'>Ready</button>
     </div>
 
     <div class="board">
-        <div class="player-grid grid">
+        <div class="player-board">
+            <h2>Player Board</h2>
+            <div class="ship-container">
+                <div class="ship carrier" id='carrier' draggable="true">
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                </div>
+                <div class="ship battleship" id='battleship' draggable="true">
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                </div>
+                <div class="ship destroyer" id='destroyer1' draggable="true">
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                </div>
+                <div class="ship destroyer" id='destroyer2' draggable="true">
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                </div>
+                <div class="ship patrol-boat" id='patrol-boat' draggable="true">
+                    <div class="ship-smaller-grid"></div>
+                    <div class="ship-smaller-grid"></div>
+                </div>
+            </div>        
+            <div class="player-grid grid"></div>
+        </div>
+        <div class="computer-board">
+            <h2>Computer Board</h2>
+            <div class="computer-grid grid"></div>
+        </div>
+    </div>
+    </div>
 
-        </div>
-        <div class="computer-grid grid">
     
-        </div>
-    </div>
-    <div class="ship carrier" id='carrier' draggable="true">
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-    </div>
-    <div class="ship battleship" id='battleship' draggable="true">
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-    </div>
-    <div class="ship destroyer" id='destroyer1' draggable="true">
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-    </div>
-    <div class="ship destroyer" id='destroyer2' draggable="true">
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-    </div>
-    <div class="ship patrol-boat" id='patrol-boat' draggable="true">
-        <div class="ship-smaller-grid"></div>
-        <div class="ship-smaller-grid"></div>
-    </div>
 
     <div class="winning-message" id="winningMessage">
         <div class="winning-message-text" id="winningText"></div>

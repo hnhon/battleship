@@ -4,6 +4,28 @@
     padding: 0;
 }
 
+.display-banner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    margin: 10px
+}
+
+.ready-btn {
+    padding: 10px 15px;
+    font-size: 2rem;
+    margin-top: 5px;
+}
+
+.player-board, .computer-board {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .grid {
     height: 400px;
     width: 400px;
@@ -18,9 +40,13 @@
     border: 0.5px solid black;
 }
 
+.computer-smaller-grid:hover {
+    cursor: pointer;
+    background-color: rgba(90, 150, 170, 0.5);
+}
+
 .ship {
-    /* background-color: pink; */
-    border: 4px solid red
+    border: 4px solid blue
 }
 
 .ship div {
