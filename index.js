@@ -523,13 +523,23 @@ function checkHit(id, player) {
     let checker = [];
     checker = (player == 'player') ? computerShipPosition : playerShipPosition
     let isHit = checker.some(position => position == id)
-    console.log(isHit)
     return isHit
 }
 
-let cpuAttackArr = [];
+let cpuPickedNum = [];
 function cpuAttack() {
+    //Pick a square that hasn't been picked before
     let randomNum = Math.floor(Math.random() * 100)
+    console.log('first num: ' + randomNum)
+    while(cpuPickedNum.some(cpuPickedNum=> cpuPickedNum == randomNum))  {
+        console.log(randomNum + 'is the number already picked before: ' + cpuPickedNum.some(cpuPickedNum=> cpuPickedNum == randomNum))
+        randomNum = Math.floor(Math.random() * 100)
+        console.log('new num: ' + randomNum)
+    }
+    cpuPickedNum = [...cpuPickedNum, randomNum]
+    console.log('cpuPickedNum: ' + cpuPickedNum)
+    console.log(typeof(cpuPickedNum))
+    //Get the square position
     let dataX = (randomNum % 10) + 1;
     let dataY = yLetter[Math.floor(randomNum / 10)]
     let id = `${dataX}-${dataY}-player`
