@@ -169,6 +169,14 @@
     padding: 10px 10px;
 }
 
+.picked-square {
+    background-color: rgb(153, 108, 179);
+}
+
+.hitted-square {
+    background-color: rgb(190, 72, 92);
+}
+
 @media (max-width: 1200px) {
     .game {
         display: flex;

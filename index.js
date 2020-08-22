@@ -21,16 +21,35 @@ debug.addEventListener('click', function () {
     })
 })
 
-function removeShip() {
-    ships.forEach(ship=> {
+function removePlayerShip() {
+    ships.forEach(ship => {
         ship.parentNode.removeChild(ship)
     })
 }
 
-function addShip() {
-    for (i=0; i<5; i++) {
+function addPlayerShip() {
+    for (i = 0; i < 5; i++) {
         shipContainer.appendChild(ships[i])
     }
+}
+
+function removeCpuShip () {
+    document.querySelectorAll('.computer-ship').forEach(ship => {
+        ship.parentNode.removeChild(ship)
+    })
+}
+
+function initState() {
+    fleets.forEach(fleet => {
+        fleet.isHorizontal = true;
+        fleet.isTaken = false;
+        fleet.position = [];
+    })
+    cmptrFleets.forEach(el => {
+        el.isHorizontal = cmptrIsHorizontal();
+        el.isTaken = false;
+        el.position = [];
+    })
 }
 
 function initGame() {
@@ -42,8 +61,31 @@ initGame();
 restartBtn.addEventListener('click', handleRestart)
 function handleRestart() {
     initGame()
-    removeShip()
-    addShip()
+    initState()
+    removePlayerShip()
+    addPlayerShip()
+    playerSmallerGrid.forEach(el => {
+        el.classList.remove('picked-square')
+        el.classList.remove('hitted-square')
+    })
+    isActiveGame = false;
+    playerHitCounter = 0;
+    computerHitCounter = 0;
+    cmptrFleetsDiv = [];
+    removeCpuShip();
+    cpuGenerateShip();
+    cpuPlaceShip();
+    playerCounter = 0;
+    computerCounter = 0;
+    playerShipPosition = [];
+    computerShipPosition = [];
+    player = 'player'
+    cpuPickedNum = [];
+    playerPickedNum = [];
+    computerSmallerGrid.forEach(el => {
+        el.classList.remove('picked-square')
+        el.classList.remove('hitted-square')
+    })
 }
 
 //Create smaller grids inside board
@@ -424,67 +466,74 @@ let cmptrShipsPositions = Object.create(shipsPositions)
 cmptrShipsPositions.who = cmptrFleets
 
 //Computer Generate Ships
+function cpuGenerateShip() {
+    cmptrFleets.forEach(fleet => {
+        let containerDiv = document.createElement('div');
+        containerDiv.setAttribute('id', fleet.name);
+        containerDiv.classList.add('computer-ship')
+        let height = 40 * 1 + 40 * (fleet.isHorizontal ? 0 : fleet.length - 1);
+        let width = 40 * 1 + 40 * (fleet.isHorizontal ? fleet.length - 1 : 0);
+        containerDiv.style.height = height + 'px';
+        containerDiv.style.width = width + 'px';
+        containerDiv.style.display = 'flex'
+        if (!fleet.isHorizontal) {
+            containerDiv.style.flexDirection = 'column'
+        }
+        for (i = 0; i < fleet.length; i++) {
+            let smallerDiv = document.createElement('div');
+            smallerDiv.style.height = '40px';
+            smallerDiv.style.width = '40px';
+            containerDiv.appendChild(smallerDiv);
+        }
+        cmptrFleetsDiv = [...cmptrFleetsDiv, containerDiv]
+    })
+}
+
 let cmptrFleetsDiv = []
-cmptrFleets.forEach(fleet => {
-    let containerDiv = document.createElement('div');
-    containerDiv.setAttribute('id', fleet.name);
-    containerDiv.classList.add('computer-ship')
-    let height = 40 * 1 + 40 * (fleet.isHorizontal ? 0 : fleet.length - 1);
-    let width = 40 * 1 + 40 * (fleet.isHorizontal ? fleet.length - 1 : 0);
-    containerDiv.style.height = height + 'px';
-    containerDiv.style.width = width + 'px';
-    containerDiv.style.display = 'flex'
-    if (!fleet.isHorizontal) {
-        containerDiv.style.flexDirection = 'column'
-    }
-    for (i = 0; i < fleet.length; i++) {
-        let smallerDiv = document.createElement('div');
-        smallerDiv.style.height = '40px';
-        smallerDiv.style.width = '40px';
-        containerDiv.appendChild(smallerDiv);
-    }
-    cmptrFleetsDiv = [...cmptrFleetsDiv, containerDiv]
-})
+cpuGenerateShip()
 
 //Computer Place Ship
 const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
-for (i = 0; i < 5; i++) {
-    let isOutofGrid = true;
-    let isOccupied = true;
-    let shipName = cmptrFleetsDiv[i].getAttribute('id')
-    let shipLength;
-    let shipArr = [];
-    let randomNum;
-    while (isOutofGrid || isOccupied) {
-        randomNum = Math.floor(Math.random() * 100);
+function cpuPlaceShip() {
+    for (i = 0; i < 5; i++) {
+        let isOutofGrid = true;
+        let isOccupied = true;
+        let shipName = cmptrFleetsDiv[i].getAttribute('id')
+        let shipLength;
+        let shipArr = [];
+        let randomNum;
+        while (isOutofGrid || isOccupied) {
+            randomNum = Math.floor(Math.random() * 100);
 
-        let orientation;
-        shipArr = [randomNum];
+            let orientation;
+            shipArr = [randomNum];
 
-        cmptrFleets.forEach(fleet => {
-            if (fleet.name == shipName) {
-                orientation = fleet.isHorizontal ? 'hoz' : 'vert';
-                shipLength = fleet.length;
+            cmptrFleets.forEach(fleet => {
+                if (fleet.name == shipName) {
+                    orientation = fleet.isHorizontal ? 'hoz' : 'vert';
+                    shipLength = fleet.length;
+                }
+            })
+            if (orientation == 'hoz') {
+                for (j = 0; j < shipLength - 1; j++) {
+                    shipArr = [...shipArr, randomNum + j + 1]
+                }
+                let index = randomNum % 10
+                isOutofGrid = index + shipLength - 1 > 9 ? true : false;
+            } else {
+                for (j = 0; j < shipLength - 1; j++) {
+                    shipArr = [...shipArr, randomNum + (j + 1) * 10]
+                }
+                let index = Math.floor(randomNum / 10);
+                isOutofGrid = index + shipLength - 1 > 9 ? true : false;
             }
-        })
-        if (orientation == 'hoz') {
-            for (j = 0; j < shipLength - 1; j++) {
-                shipArr = [...shipArr, randomNum + j + 1]
-            }
-            let index = randomNum % 10
-            isOutofGrid = index + shipLength - 1 > 9 ? true : false;
-        } else {
-            for (j = 0; j < shipLength - 1; j++) {
-                shipArr = [...shipArr, randomNum + (j + 1) * 10]
-            }
-            let index = Math.floor(randomNum / 10);
-            isOutofGrid = index + shipLength - 1 > 9 ? true : false;
+            isOccupied = checkOccupied(shipName, shipArr, cmptrFleets);
         }
-        isOccupied = checkOccupied(shipName, shipArr, cmptrFleets);
+        computerSmallerGrid[randomNum].appendChild(cmptrFleetsDiv[i])
+        updateShipPositionState(shipName, shipArr, cmptrFleets)
     }
-    computerSmallerGrid[randomNum].appendChild(cmptrFleetsDiv[i])
-    updateShipPositionState(shipName, shipArr, cmptrFleets)
 }
+cpuPlaceShip();
 
 //Start game logic
 let playerCounter = 0;
@@ -492,8 +541,6 @@ let computerCounter = 0;
 let playerShipPosition = [];
 let computerShipPosition = [];
 let player = 'player'
-
-
 
 start.addEventListener('click', handleStartGame)
 function handleStartGame() {
@@ -518,6 +565,7 @@ computerSmallerGrid.forEach(el => {
     el.addEventListener('click', e => handlePlayerPick(e))
 })
 
+let playerPickedNum = []
 function handlePlayerPick(e) {
     if (!isActiveGame) {
         return
@@ -530,19 +578,27 @@ function handlePlayerPick(e) {
         t = t.parentNode
     }
     //Prevent pick the square that has been picked before
-    if (t.getAttribute('isPicked')) {
+    let pickedNum = parseInt(t.getAttribute('number'))
+    if (playerPickedNum.some(num => num === pickedNum)) {
         console.log('picked before')
         console.log('pick another')
         return
     }
-    //Assign target area is picked attribute
-    t.setAttribute('isPicked', true)
+    playerPickedNum = [...playerPickedNum, pickedNum]
+
+    // if (t.getAttribute('isPicked')) {
+    //     console.log('picked before')
+    //     console.log('pick another')
+    //     return
+    // }
+    // t.setAttribute('isPicked', true)
     //Check if hit
     let isHit = checkHit(t.getAttribute('number'), player);
     //Counte hit
     playerCounter = isHit ? playerCounter + 1 : playerCounter;
     //Styling
-    t.style.backgroundColor = isHit ? 'red' : '#ac9cd9';
+    let style = isHit ? 'hitted-square' : 'picked-square'
+    t.classList.add(style)
     //Check if win
     let isWin = ((playerCounter == 17) ? true : false)
     //if win end game
@@ -581,7 +637,8 @@ function cpuAttack() {
     //Count hit
     computerCounter = isHit ? computerCounter + 1 : computerCounter;
     //Styling
-    playerSmallerGrid[randomNum].style.backgroundColor = isHit ? 'red' : '#ac9cd9';
+    let style = isHit ? 'hitted-square' : 'picked-square'
+    playerSmallerGrid[randomNum].classList.add(style)
     //Check if win
     let isWin = ((computerCounter == 17) ? true : false)
     //if win, end game
