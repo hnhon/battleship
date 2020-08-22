@@ -1,6 +1,7 @@
 const grids = document.querySelectorAll('.grid');
 const ships = document.querySelectorAll('.ship');
 const shipSmallerGrids = document.querySelectorAll('.ship-smaller-grid');
+const shipContainer = document.querySelector('.ship-container');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
 const start = document.querySelector('#start');
@@ -8,16 +9,41 @@ const winningMessage = document.querySelector('#winningMessage');
 const winningText = document.querySelector('#winningText');
 const restartBtn = document.querySelector('#restartBtn');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+const debug = document.getElementById('debug')
 
-function initGame () {
+createGrid(grids[0], 'player');
+createGrid(grids[1], 'computer');
+
+const playerSmallerGrid = document.querySelectorAll('.player-smaller-grid')
+debug.addEventListener('click', function () {
+    playerSmallerGrid.forEach(el => {
+        console.log(el.children[0])
+    })
+})
+
+function removeShip() {
+    ships.forEach(ship=> {
+        ship.parentNode.removeChild(ship)
+    })
+}
+
+function addShip() {
+    for (i=0; i<5; i++) {
+        shipContainer.appendChild(ships[i])
+    }
+}
+
+function initGame() {
     document.body.removeChild(winningMessage)
 }
 
 initGame();
 
 restartBtn.addEventListener('click', handleRestart)
-function handleRestart () {
+function handleRestart() {
     initGame()
+    removeShip()
+    addShip()
 }
 
 //Create smaller grids inside board
@@ -43,9 +69,6 @@ function createGrid(grid, whosGrid) {
         div.setAttribute('position', dataX + '-' + dataYLetter + '-' + whosGrid)
     }
 };
-
-createGrid(grids[0], 'player');
-createGrid(grids[1], 'computer');
 
 //Ship State 
 let fleets = [
@@ -147,83 +170,88 @@ function startGame() {
     isActiveGame = !isActiveGame
 }
 
+const handleRotateShip = (ship) => {
+    console.log(ship)
+    if (isActiveGame) {
+        return
+    }
+    let shipName = ship.getAttribute('id');
+    let isOutofGrid;
+    //Initial rotate when all ships are outside of the board
+    if (ship.parentElement.getAttribute('data-X') == null) {
+        fleets.forEach(fleet => {
+            if (fleet.name == shipName) {
+                fleet.isHorizontal = !fleet.isHorizontal;
+            }
+        })
+        ship.classList.toggle(`${shipName}-verticle`);
+    }
+
+    //Rotate inside gird
+    if (ship.parentElement.getAttribute('data-X') !== null) {
+        let positionX = ship.parentElement.getAttribute("data-X");
+        let positionY = ship.parentElement.getAttribute("data-Y");
+        let newOrientation;
+        let fleetLength;
+        let isHorizontal;
+        //Retrieve state
+        fleets.forEach(el => {
+            if (el.name == shipName) {
+                if (el.isHorizontal) {
+                    newOrientation = 'vert'
+                } else {
+                    newOrientation = 'hoz'
+                }
+                fleetLength = el.length
+            }
+        })
+
+        //Check if occupied
+        let newArr = [];
+        if (newOrientation == 'hoz') {
+            for (i = 0; i < fleetLength; i++) {
+                newArr = [...newArr, `${parseInt(positionX) + i}-${positionY}-player`]
+            }
+        } else if (newOrientation == 'vert') {
+            for (i = 0; i < fleetLength; i++) {
+                newArr = [...newArr, `${positionX}-${yLetter[yLetter.indexOf(positionY) + i]}-player`]
+            }
+        }
+        if (checkOccupied(shipName, newArr, fleets)) {
+            return
+        }
+        //Check if out of board, if not assign arg to following
+        if (newOrientation == 'hoz') {
+            if ((parseInt(positionX) + fleetLength - 1) > 10) {
+                isOutofGrid = true
+            } else {
+                isHorizontal = true
+            }
+        } else if (newOrientation == 'vert') {
+            if ((yLetter.indexOf(positionY) + fleetLength) > 10) {
+                isOutofGrid = true
+            } else {
+                isHorizontal = false
+            }
+        };
+        if (isOutofGrid) {
+            return
+        }
+        fleets.forEach(fleet => {
+            if (fleet.name == shipName) {
+                fleet.isHorizontal = !fleet.isHorizontal;
+            }
+        })
+        updateShipPositionState(shipName, newArr, fleets)
+        assignIdtoGridofShip(ship.children, positionX, positionY, isHorizontal)
+        ship.classList.toggle(`${shipName}-verticle`);
+    }
+}
+
 //Rotate ships; Change Ship isHorizontal State
 ships.forEach(ship => {
     ship.addEventListener('click', function () {
-        if (isActiveGame) {
-            return
-        }
-        let shipName = ship.getAttribute('id');
-        let isOutofGrid;
-        //Initial rotate when all ships are outside of the board
-        if (ship.parentElement.getAttribute('data-X') == null) {
-            fleets.forEach(fleet => {
-                if (fleet.name == shipName) {
-                    fleet.isHorizontal = !fleet.isHorizontal;
-                }
-            })
-            ship.classList.toggle(`${shipName}-verticle`);
-        }
-
-        //Rotate inside gird
-        if (ship.parentElement.getAttribute('data-X') !== null) {
-            let positionX = ship.parentElement.getAttribute("data-X");
-            let positionY = ship.parentElement.getAttribute("data-Y");
-            let newOrientation;
-            let fleetLength;
-            let isHorizontal;
-            //Retrieve state
-            fleets.forEach(el => {
-                if (el.name == shipName) {
-                    if (el.isHorizontal) {
-                        newOrientation = 'vert'
-                    } else {
-                        newOrientation = 'hoz'
-                    }
-                    fleetLength = el.length
-                }
-            })
-
-            //Check if occupied
-            let newArr = [];
-            if (newOrientation == 'hoz') {
-                for (i = 0; i < fleetLength; i++) {
-                    newArr = [...newArr, `${parseInt(positionX) + i}-${positionY}-player`]
-                }
-            } else if (newOrientation == 'vert') {
-                for (i = 0; i < fleetLength; i++) {
-                    newArr = [...newArr, `${positionX}-${yLetter[yLetter.indexOf(positionY) + i]}-player`]
-                }
-            }
-            if (checkOccupied(shipName, newArr, fleets)) {
-                return
-            }
-            //Check if out of board, if not assign arg to following
-            if (newOrientation == 'hoz') {
-                if ((parseInt(positionX) + fleetLength - 1) > 10) {
-                    isOutofGrid = true
-                } else {
-                    isHorizontal = true
-                }
-            } else if (newOrientation == 'vert') {
-                if ((yLetter.indexOf(positionY) + fleetLength) > 10) {
-                    isOutofGrid = true
-                } else {
-                    isHorizontal = false
-                }
-            };
-            if (isOutofGrid) {
-                return
-            }
-            fleets.forEach(fleet => {
-                if (fleet.name == shipName) {
-                    fleet.isHorizontal = !fleet.isHorizontal;
-                }
-            })
-            updateShipPositionState(shipName, newArr, fleets)
-            assignIdtoGridofShip(ship.children, positionX, positionY, isHorizontal)
-            ship.classList.toggle(`${shipName}-verticle`);
-        }
+        handleRotateShip(ship)
     })
 })
 
@@ -465,7 +493,7 @@ let playerShipPosition = [];
 let computerShipPosition = [];
 let player = 'player'
 
-const playerSmallerGrid = document.querySelectorAll('.player-smaller-grid')
+
 
 start.addEventListener('click', handleStartGame)
 function handleStartGame() {
@@ -519,14 +547,14 @@ function handlePlayerPick(e) {
     let isWin = ((playerCounter == 17) ? true : false)
     //if win end game
     if (isWin) {
-        endGame ();
+        endGame();
         winningText.innerHTML = 'You win!';
         return;
     }
     //Swap player
     player = 'computer'
     //Computer acctact
-    setTimeout(cpuAttack, 1000)
+    setTimeout(cpuAttack, 0)
 }
 
 function checkHit(id, player) {
@@ -540,7 +568,7 @@ let cpuPickedNum = [];
 function cpuAttack() {
     //Pick a square that hasn't been picked before
     let randomNum = Math.floor(Math.random() * 100)
-    while(cpuPickedNum.some(cpuPickedNum=> cpuPickedNum == randomNum))  {
+    while (cpuPickedNum.some(cpuPickedNum => cpuPickedNum == randomNum)) {
         randomNum = Math.floor(Math.random() * 100)
     }
     cpuPickedNum = [...cpuPickedNum, randomNum]
@@ -558,7 +586,7 @@ function cpuAttack() {
     let isWin = ((computerCounter == 17) ? true : false)
     //if win, end game
     if (isWin) {
-        endGame ();
+        endGame();
         winningText.innerHTML = `${player} win!`;
         return;
     }
