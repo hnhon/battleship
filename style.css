@@ -9,8 +9,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem;
-    margin: 10px
+    margin: 10px;
+}
+
+.player-message {
+
 }
 
 .ready-btn {
@@ -21,15 +24,12 @@
 
 .game {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 .ship-container {
-    width: 200px;
-    height: 240px;
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 .ship-container h3 {
     margin-bottom: 1px;
@@ -52,9 +52,9 @@
     background-color: lightblue;
 }
 
-.smaller-grid {
+/* .smaller-grid {
     border: 0.5px solid black;
-}
+} */
 
 .computer-smaller-grid:hover {
     cursor: pointer;
@@ -170,11 +170,11 @@
 }
 
 .picked-square {
-    background-color: rgb(153, 108, 179);
+    background-color: rgb(204, 205, 207);
 }
 
 .hitted-square {
-    background-color: rgb(190, 72, 92);
+    background-color: rgb(218, 54, 54);
 }
 
 @media (max-width: 1200px) {

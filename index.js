@@ -5,6 +5,7 @@ const shipContainer = document.querySelector('.ship-container');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
 const start = document.querySelector('#start');
+const playMessage = document.querySelector('#playerMessage')
 const winningMessage = document.querySelector('#winningMessage');
 const winningText = document.querySelector('#winningText');
 const restartBtn = document.querySelector('#restartBtn');
@@ -15,102 +16,9 @@ createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
 
 const playerSmallerGrid = document.querySelectorAll('.player-smaller-grid')
-debug.addEventListener('click', function () {
-    playerSmallerGrid.forEach(el => {
-        console.log(el.children[0])
-    })
-})
-
-function removePlayerShip() {
-    ships.forEach(ship => {
-        ship.parentNode.removeChild(ship)
-    })
-}
-
-function addPlayerShip() {
-    for (i = 0; i < 5; i++) {
-        shipContainer.appendChild(ships[i])
-    }
-}
-
-function removeCpuShip () {
-    document.querySelectorAll('.computer-ship').forEach(ship => {
-        ship.parentNode.removeChild(ship)
-    })
-}
-
-function initState() {
-    fleets.forEach(fleet => {
-        fleet.isHorizontal = true;
-        fleet.isTaken = false;
-        fleet.position = [];
-    })
-    cmptrFleets.forEach(el => {
-        el.isHorizontal = cmptrIsHorizontal();
-        el.isTaken = false;
-        el.position = [];
-    })
-}
-
-function initGame() {
-    document.body.removeChild(winningMessage)
-}
+const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
 
 initGame();
-
-restartBtn.addEventListener('click', handleRestart)
-function handleRestart() {
-    initGame()
-    initState()
-    removePlayerShip()
-    addPlayerShip()
-    playerSmallerGrid.forEach(el => {
-        el.classList.remove('picked-square')
-        el.classList.remove('hitted-square')
-    })
-    isActiveGame = false;
-    playerHitCounter = 0;
-    computerHitCounter = 0;
-    cmptrFleetsDiv = [];
-    removeCpuShip();
-    cpuGenerateShip();
-    cpuPlaceShip();
-    playerCounter = 0;
-    computerCounter = 0;
-    playerShipPosition = [];
-    computerShipPosition = [];
-    player = 'player'
-    cpuPickedNum = [];
-    playerPickedNum = [];
-    computerSmallerGrid.forEach(el => {
-        el.classList.remove('picked-square')
-        el.classList.remove('hitted-square')
-    })
-}
-
-//Create smaller grids inside board
-function createGrid(grid, whosGrid) {
-    for (i = 0; i < 100; i++) {
-        let div = document.createElement('div');
-        grid.appendChild(div);
-        div.style.height = '40px';
-        div.style.width = '40px';
-        div.setAttribute('class', 'smaller-grid')
-        div.setAttribute('number', i)
-        div.classList.add(`${whosGrid}-smaller-grid`)
-        //Assign data attribute to the borad for coordination;
-        //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
-        let dataX = (i + 1) % 10;
-        if (dataX == 0) {
-            dataX = 10;
-        }
-        let dataYNumber = Math.floor(((i) / 10));
-        let dataYLetter = yLetter[(dataYNumber)]
-        div.setAttribute('data-x', dataX)
-        div.setAttribute('data-y', dataYLetter)
-        div.setAttribute('position', dataX + '-' + dataYLetter + '-' + whosGrid)
-    }
-};
 
 //Ship State 
 let fleets = [
@@ -151,6 +59,45 @@ let fleets = [
     }
 ]
 
+//Computer fleet state
+let cmptrFleets = [
+    {
+        name: 'cmptrCarrier',
+        length: 5,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrBattleship',
+        length: 4,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrDestroyer1',
+        length: 3,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrDestroyer2',
+        length: 3,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    },
+    {
+        name: 'cmptrPatrol-boat',
+        length: 2,
+        isHorizontal: cmptrIsHorizontal(),
+        isTaken: false,
+        position: []
+    }
+]
+
 let shipsPositions = {
     who: fleets,
     getPosition() {
@@ -161,6 +108,151 @@ let shipsPositions = {
         return arr
     }
 }
+
+//Create a new computer ship positions object using shipsPositions object
+let cmptrShipsPositions = Object.create(shipsPositions)
+cmptrShipsPositions.who = cmptrFleets
+
+//Init setting
+let isActiveGame = false;
+let playerHitCounter = 0;
+let computerHitCounter = 0;
+let cmptrFleetsDiv = [];
+let playerPickedNum = [];
+let cpuPickedNum = [];
+//Start game logic
+let playerCounter = 0;
+let computerCounter = 0;
+let playerShipPosition = [];
+let computerShipPosition = [];
+let player = 'player'
+
+cpuGenerateShip();
+cpuPlaceShip();
+
+//Restart button => display after a game is ended, click to reset all setting
+restartBtn.addEventListener('click', handleRestart)
+//Rotate ships; Change Ship isHorizontal State
+ships.forEach(ship => {
+    ship.addEventListener('click', function () {
+        handleRotateShip(ship)
+    })
+})
+//Drag ship; assign dragover and drop events to the target area, later remove to prevent drag other stuffs inside;
+ships.forEach(ship => {
+    if (isActiveGame) {
+        return
+    }
+    ship.addEventListener('dragstart', function (ev) {
+        if (!ev.target.classList.contains('ship')) {
+            return
+        }
+        ev.dataTransfer.setData("text/plain", ev.target.id)
+        playerGrid.addEventListener('dragover', dragOver)
+        playerGrid.addEventListener('drop', onDrop)
+    });
+    //Remove playerGrid dragover and drop event; Avoid player drag other item inside
+    ship.addEventListener('dragend', function () {
+        playerGrid.removeEventListener('dragover', dragOver)
+        playerGrid.removeEventListener('drop', onDrop)
+    })
+})
+// Player pick an area, check if hit or win, swap player
+computerSmallerGrid.forEach(el => {
+    el.addEventListener('click', e => handlePlayerPick(e))
+})
+
+//Ready button, click to start game
+start.addEventListener('click', handleStartGame)
+
+function removePlayerShip() {
+    ships.forEach(ship => {
+        ship.parentNode.removeChild(ship)
+    })
+}
+
+function addPlayerShip() {
+    for (i = 0; i < 5; i++) {
+        shipContainer.appendChild(ships[i])
+    }
+}
+
+function removeCpuShip () {
+    document.querySelectorAll('.computer-ship').forEach(ship => {
+        ship.parentNode.removeChild(ship)
+    })
+}
+
+function initState() {
+    fleets.forEach(fleet => {
+        fleet.isHorizontal = true;
+        fleet.isTaken = false;
+        fleet.position = [];
+    })
+    cmptrFleets.forEach(el => {
+        el.isHorizontal = cmptrIsHorizontal();
+        el.isTaken = false;
+        el.position = [];
+    })
+}
+
+function initGame() {
+    document.body.removeChild(winningMessage)
+}
+
+function handleRestart() {
+    initGame()
+    initState()
+    removePlayerShip()
+    addPlayerShip()
+    playerSmallerGrid.forEach(el => {
+        el.classList.remove('picked-square')
+        el.classList.remove('hitted-square')
+    })
+    isActiveGame = false;
+    playerHitCounter = 0;
+    computerHitCounter = 0;
+    cmptrFleetsDiv = [];
+    removeCpuShip();
+    cpuGenerateShip();
+    cpuPlaceShip();
+    playerCounter = 0;
+    computerCounter = 0;
+    playerShipPosition = [];
+    computerShipPosition = [];
+    player = 'player'
+    cpuPickedNum = [];
+    playerPickedNum = [];
+    computerSmallerGrid.forEach(el => {
+        el.classList.remove('picked-square')
+        el.classList.remove('hitted-square')
+    })
+    playMessage.innerHTML = ''
+}
+
+//Create smaller grids inside board
+function createGrid(grid, whosGrid) {
+    for (i = 0; i < 100; i++) {
+        let div = document.createElement('div');
+        grid.appendChild(div);
+        div.style.height = '40px';
+        div.style.width = '40px';
+        div.setAttribute('class', 'smaller-grid')
+        div.setAttribute('number', i)
+        div.classList.add(`${whosGrid}-smaller-grid`)
+        //Assign data attribute to the borad for coordination;
+        //Use number for X axis, letter for Y axis; Top-left corner is A1; Bottom-right is K10;
+        let dataX = (i + 1) % 10;
+        if (dataX == 0) {
+            dataX = 10;
+        }
+        let dataYNumber = Math.floor(((i) / 10));
+        let dataYLetter = yLetter[(dataYNumber)]
+        div.setAttribute('data-x', dataX)
+        div.setAttribute('data-y', dataYLetter)
+        div.setAttribute('position', dataX + '-' + dataYLetter + '-' + whosGrid)
+    }
+};
 
 //Update fleets position state
 function updateShipPositionState(shipName, shipPosition, who) {
@@ -204,16 +296,11 @@ function checkOccupied(shipName, newArr, who) {
     return isOccupied
 }
 
-let isActiveGame = false;
-let playerHitCounter = 0;
-let computerHitCounter = 0;
-
 function startGame() {
     isActiveGame = !isActiveGame
 }
 
 const handleRotateShip = (ship) => {
-    console.log(ship)
     if (isActiveGame) {
         return
     }
@@ -289,13 +376,6 @@ const handleRotateShip = (ship) => {
         ship.classList.toggle(`${shipName}-verticle`);
     }
 }
-
-//Rotate ships; Change Ship isHorizontal State
-ships.forEach(ship => {
-    ship.addEventListener('click', function () {
-        handleRotateShip(ship)
-    })
-})
 
 // Drag and Drop ships
 const dragOver = function (ev) {
@@ -399,71 +479,9 @@ const onDrop = function (ev) {
     updateShipPositionState(draggedShip.getAttribute('id'), shipArr, fleets)
 }
 
-//Drag start; assign dragover and drop events to the target area, later remove to prevent drag other stuffs inside;
-ships.forEach(ship => {
-    if (isActiveGame) {
-        return
-    }
-    ship.addEventListener('dragstart', function (ev) {
-        ev.dataTransfer.setData("text/plain", ev.target.id)
-        playerGrid.addEventListener('dragover', dragOver)
-        playerGrid.addEventListener('drop', onDrop)
-    });
-    //Remove playerGrid dragover and drop event; Avoid player drag other item inside
-    ship.addEventListener('dragend', function () {
-        playerGrid.removeEventListener('dragover', dragOver)
-        playerGrid.removeEventListener('drop', onDrop)
-    })
-})
-
-//Computer Part
-//Computer Fleets State
 function cmptrIsHorizontal() {
     return Math.floor(Math.random() * 2) ? false : true
 }
-
-//Computer fleet state
-let cmptrFleets = [
-    {
-        name: 'cmptrCarrier',
-        length: 5,
-        isHorizontal: cmptrIsHorizontal(),
-        isTaken: false,
-        position: []
-    },
-    {
-        name: 'cmptrBattleship',
-        length: 4,
-        isHorizontal: cmptrIsHorizontal(),
-        isTaken: false,
-        position: []
-    },
-    {
-        name: 'cmptrDestroyer1',
-        length: 3,
-        isHorizontal: cmptrIsHorizontal(),
-        isTaken: false,
-        position: []
-    },
-    {
-        name: 'cmptrDestroyer2',
-        length: 3,
-        isHorizontal: cmptrIsHorizontal(),
-        isTaken: false,
-        position: []
-    },
-    {
-        name: 'cmptrPatrol-boat',
-        length: 2,
-        isHorizontal: cmptrIsHorizontal(),
-        isTaken: false,
-        position: []
-    }
-]
-
-//Create a new computer ship positions object using shipsPositions object
-let cmptrShipsPositions = Object.create(shipsPositions)
-cmptrShipsPositions.who = cmptrFleets
 
 //Computer Generate Ships
 function cpuGenerateShip() {
@@ -489,11 +507,7 @@ function cpuGenerateShip() {
     })
 }
 
-let cmptrFleetsDiv = []
-cpuGenerateShip()
-
 //Computer Place Ship
-const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
 function cpuPlaceShip() {
     for (i = 0; i < 5; i++) {
         let isOutofGrid = true;
@@ -533,39 +547,26 @@ function cpuPlaceShip() {
         updateShipPositionState(shipName, shipArr, cmptrFleets)
     }
 }
-cpuPlaceShip();
 
-//Start game logic
-let playerCounter = 0;
-let computerCounter = 0;
-let playerShipPosition = [];
-let computerShipPosition = [];
-let player = 'player'
-
-start.addEventListener('click', handleStartGame)
 function handleStartGame() {
     let checker = shipsPositions.getPosition().length;
+    console.log (checker)
     if (checker !== 17) {
-        alert('place all ships')
+        playMessage.innerHTML = 'You haven\'t place all ships'
         return
     }
     else {
         if (isActiveGame) {
-            alert('game already start')
+            playMessage.innerHTML = 'Game already started'
             return
         }
-        alert('game start')
+        playMessage.innerHTML = 'Game Start'
         playerShipPosition = shipsPositions.getPosition()
         computerShipPosition = cmptrShipsPositions.getPosition()
         startGame()
     }
 }
 
-computerSmallerGrid.forEach(el => {
-    el.addEventListener('click', e => handlePlayerPick(e))
-})
-
-let playerPickedNum = []
 function handlePlayerPick(e) {
     if (!isActiveGame) {
         return
@@ -585,13 +586,6 @@ function handlePlayerPick(e) {
         return
     }
     playerPickedNum = [...playerPickedNum, pickedNum]
-
-    // if (t.getAttribute('isPicked')) {
-    //     console.log('picked before')
-    //     console.log('pick another')
-    //     return
-    // }
-    // t.setAttribute('isPicked', true)
     //Check if hit
     let isHit = checkHit(t.getAttribute('number'), player);
     //Counte hit
@@ -620,7 +614,6 @@ function checkHit(id, player) {
     return isHit
 }
 
-let cpuPickedNum = [];
 function cpuAttack() {
     //Pick a square that hasn't been picked before
     let randomNum = Math.floor(Math.random() * 100)

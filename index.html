@@ -10,17 +10,11 @@
 
 <body>
     <div class='display-banner'>
-        <p>Click Ship to rotate<br>Drag to place ships<br>Press Ready to start game</p>
-        <div class="score" style="display: none;">
-            <p class="player-score">You:</p>
-            <p class="computer-score">Computer:</p>
-        </div>
+        <h2>Battleship</h2>
+        <p>Click to rotate ships. Drag to drop to place. Press Ready to start.</p>
+        <div class="play-message" id="playerMessage"></div>
         <button class="ready-btn" id='start'>Ready</button>
-    </div>
-    <button id="debug">Debug</button>
-    <div class="game">
         <div class="ship-container">
-            <h3>Ship</h3>
             <div class="ship carrier" id='carrier' draggable="true">
                 <div class="ship-smaller-grid"></div>
                 <div class="ship-smaller-grid"></div>
@@ -49,6 +43,9 @@
                 <div class="ship-smaller-grid"></div>
             </div>
         </div>
+    </div>
+
+    <div class="game">
         <div class="player-container">
             <h3>Player Board</h3>
             <div class="player-grid grid"></div>
