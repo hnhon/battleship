@@ -477,6 +477,10 @@ function handleStartGame() {
         return
     }
     else {
+        if (isActiveGame) {
+            alert('game already start')
+            return
+        }
         alert('game start')
         playerShipPosition = shipsPositions.getPosition()
         computerShipPosition = cmptrShipsPositions.getPosition()
