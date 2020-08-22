@@ -9,17 +9,33 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin: 10px
 }
 
 .ready-btn {
     padding: 10px 15px;
-    font-size: 2rem;
     margin-top: 5px;
+    font-weight: 600;
 }
 
-.player-board, .computer-board {
+.game {
+    display: flex;
+    justify-content: space-around;
+}
+
+.ship-container {
+    width: 200px;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.ship-container h3 {
+    margin-bottom: 1px;
+}
+
+.player-container, .computer-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -43,6 +59,10 @@
 .computer-smaller-grid:hover {
     cursor: pointer;
     background-color: rgba(90, 150, 170, 0.5);
+}
+
+.ship-container {
+    margin: 10px
 }
 
 .ship {
@@ -128,7 +148,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, .9);
+    background-color: rgba(148, 143, 143, 0.9);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -142,4 +162,16 @@
 
 .winning-new-game-btn {
     padding: 10px 10px;
+}
+
+@media (max-width: 1200px) {
+    .game {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .ship-container {
+        width: auto;
+        height: auto;
+    }
 }

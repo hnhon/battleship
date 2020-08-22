@@ -522,7 +522,7 @@ function handlePlayerPick(e) {
     //if win end game
     if (isWin) {
         endGame ();
-        winningText.innerHTML = `${player} win`;
+        winningText.innerHTML = 'You win!';
         return;
     }
     //Swap player
@@ -561,7 +561,7 @@ function cpuAttack() {
     //if win, end game
     if (isWin) {
         endGame ();
-        winningText.innerHTML = `${player} win`;
+        winningText.innerHTML = `${player} win!`;
         return;
     }
     //Swap player
