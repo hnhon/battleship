@@ -4,7 +4,21 @@ const shipSmallerGrids = document.querySelectorAll('.ship-smaller-grid');
 const playerGrid = document.querySelector('.player-grid');
 const computerGrid = document.querySelector('.computer-grid');
 const start = document.querySelector('#start');
+const winningMessage = document.querySelector('#winningMessage');
+const winningText = document.querySelector('#winningText');
+const restartBtn = document.querySelector('#restartBtn');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+function initGame () {
+    document.body.removeChild(winningMessage)
+}
+
+initGame();
+
+restartBtn.addEventListener('click', handleRestart)
+function handleRestart () {
+    initGame()
+}
 
 //Create smaller grids inside board
 function createGrid(grid, whosGrid) {
@@ -126,13 +140,11 @@ function checkOccupied(shipName, newArr, who) {
 }
 
 let isActiveGame = false;
+let playerHitCounter = 0;
+let computerHitCounter = 0;
 
 function startGame() {
     isActiveGame = !isActiveGame
-}
-
-function endGame() {
-
 }
 
 //Rotate ships; Change Ship isHorizontal State
@@ -489,35 +501,58 @@ function handlePlayerPick(e) {
     }
     //Check if hit
     let isHit = checkHit(t.getAttribute('number'), player);
+    //Counte hit
+    playerCounter = isHit ? playerCounter + 1 : playerCounter;
     //Styling
-    t.style.backgroundColor = isHit? 'red' : '#ac9cd9';
+    t.style.backgroundColor = isHit ? 'red' : '#ac9cd9';
     //Check if win
+    let isWin = ((playerCounter == 17) ? true : false)
+    //if win end game
+    if (isWin) {
+        endGame ();
+        winningText.innerHTML = `${player} win`;
+        return;
+    }
     //Swap player
     player = 'computer'
     //Computer acctact
-    setTimeout(cpuAttack, 2000)
+    setTimeout(cpuAttack, 1000)
 }
 
-function checkHit (id, player) {
+function checkHit(id, player) {
     let checker = [];
-    checker = (player == 'player')? computerShipPosition: playerShipPosition
-    let isHit = checker.some(position=>position==id)
+    checker = (player == 'player') ? computerShipPosition : playerShipPosition
+    let isHit = checker.some(position => position == id)
     console.log(isHit)
     return isHit
 }
 
+let cpuAttackArr = [];
 function cpuAttack() {
     let randomNum = Math.floor(Math.random() * 100)
     let dataX = (randomNum % 10) + 1;
     let dataY = yLetter[Math.floor(randomNum / 10)]
     let id = `${dataX}-${dataY}-player`
     //Check if hit
-    let isHit = checkHit (id, player)
+    let isHit = checkHit(id, player);
+    //Count hit
+    computerCounter = isHit ? computerCounter + 1 : computerCounter;
     //Styling
-    playerSmallerGrid[randomNum].style.backgroundColor = isHit? 'red' : '#ac9cd9';
+    playerSmallerGrid[randomNum].style.backgroundColor = isHit ? 'red' : '#ac9cd9';
     //Check if win
+    let isWin = ((computerCounter == 17) ? true : false)
+    //if win, end game
+    if (isWin) {
+        endGame ();
+        winningText.innerHTML = `${player} win`;
+        return;
+    }
     //Swap player
-    player = 'player'   
+    player = 'player'
+}
+
+function endGame() {
+    document.body.appendChild(winningMessage)
 }
 
 
