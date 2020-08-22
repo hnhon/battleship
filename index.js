@@ -405,7 +405,7 @@ cmptrFleets.forEach(fleet => {
     containerDiv.style.height = height + 'px';
     containerDiv.style.width = width + 'px';
     containerDiv.style.display = 'flex'
-    containerDiv.style.backgroundColor = 'pink'
+    // containerDiv.style.backgroundColor = 'pink'
     containerDiv.style.borderRadius = '20%'
     containerDiv.style.border = '4px solid red'
     if (!fleet.isHorizontal) {
@@ -499,6 +499,14 @@ function handlePlayerPick(e) {
     while (t !== null && !t.classList.contains('computer-smaller-grid')) {
         t = t.parentNode
     }
+    //Prevent pick the square that has been picked before
+    if (t.getAttribute('isPicked')) {
+        console.log('picked before')
+        console.log('pick another')
+        return
+    }
+    //Assign target area is picked attribute
+    t.setAttribute('isPicked', true)
     //Check if hit
     let isHit = checkHit(t.getAttribute('number'), player);
     //Counte hit
@@ -530,15 +538,10 @@ let cpuPickedNum = [];
 function cpuAttack() {
     //Pick a square that hasn't been picked before
     let randomNum = Math.floor(Math.random() * 100)
-    console.log('first num: ' + randomNum)
     while(cpuPickedNum.some(cpuPickedNum=> cpuPickedNum == randomNum))  {
-        console.log(randomNum + 'is the number already picked before: ' + cpuPickedNum.some(cpuPickedNum=> cpuPickedNum == randomNum))
         randomNum = Math.floor(Math.random() * 100)
-        console.log('new num: ' + randomNum)
     }
     cpuPickedNum = [...cpuPickedNum, randomNum]
-    console.log('cpuPickedNum: ' + cpuPickedNum)
-    console.log(typeof(cpuPickedNum))
     //Get the square position
     let dataX = (randomNum % 10) + 1;
     let dataY = yLetter[Math.floor(randomNum / 10)]
