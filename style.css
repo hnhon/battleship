@@ -14,8 +14,9 @@
 
 .play-message {
     width: 200px;
-    height: 20px;
-    text-align: center
+    font-weight: 600;
+    text-align: center;
+    margin: 5px;
 }
 
 .ready-btn {
@@ -54,9 +55,19 @@
     background-color: lightblue;
 }
 
-.computer-smaller-grid:hover {
+.computer-smaller-grid:hover::after {
     cursor: pointer;
     background-color: rgba(90, 150, 170, 0.5);
+
+    content: '';
+    border-radius: 50%;
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    right: 5%;
+    bottom: 5%;
 }
 
 .ship-container {

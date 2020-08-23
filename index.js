@@ -580,8 +580,10 @@ function handlePlayerPick(e) {
     if (playerPickedNum.some(num => num === pickedNum)) {
         console.log('picked before')
         console.log('pick another')
+        playMessage.innerHTML = 'You already picked this before, try another'
         return
     }
+    playMessage.innerHTML = 'Game start'
     playerPickedNum = [...playerPickedNum, pickedNum]
     //Check if hit
     let isHit = checkHit(t.getAttribute('number'), player);
