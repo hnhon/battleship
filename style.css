@@ -52,10 +52,6 @@
     background-color: lightblue;
 }
 
-/* .smaller-grid {
-    border: 0.5px solid black;
-} */
-
 .computer-smaller-grid:hover {
     cursor: pointer;
     background-color: rgba(90, 150, 170, 0.5);
@@ -169,12 +165,24 @@
     padding: 10px 10px;
 }
 
-.picked-square {
-    background-color: rgb(204, 205, 207);
+.computer-smaller-grid {
+    position: relative;
 }
 
-.hitted-square {
-    background-color: rgb(218, 54, 54);
+.picked-square {
+    background-color: pink;
+}
+
+.hitted-square::after {
+    content: '';
+    height: 40px;
+    width: 40px;
+    background-color: rgb(248, 31, 67);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 @media (max-width: 1200px) {

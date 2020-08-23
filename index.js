@@ -11,10 +11,8 @@ const winningText = document.querySelector('#winningText');
 const restartBtn = document.querySelector('#restartBtn');
 const yLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 const debug = document.getElementById('debug')
-
 createGrid(grids[0], 'player');
 createGrid(grids[1], 'computer');
-
 const playerSmallerGrid = document.querySelectorAll('.player-smaller-grid')
 const computerSmallerGrid = document.querySelectorAll('.computer-smaller-grid');
 
