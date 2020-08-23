@@ -169,6 +169,10 @@
     position: relative;
 }
 
+.player-smaller-grid {
+    position: relative;
+}
+
 .picked-square {
     background-color: pink;
 }

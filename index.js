@@ -548,7 +548,6 @@ function cpuPlaceShip() {
 
 function handleStartGame() {
     let checker = shipsPositions.getPosition().length;
-    console.log (checker)
     if (checker !== 17) {
         playMessage.innerHTML = 'You haven\'t place all ships'
         return
@@ -611,7 +610,7 @@ function checkHit(id, player) {
     let isHit = checker.some(position => position == id)
     return isHit
 }
-
+console.log(playerSmallerGrid[0])
 function cpuAttack() {
     //Pick a square that hasn't been picked before
     let randomNum = Math.floor(Math.random() * 100)
