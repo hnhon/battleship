@@ -601,7 +601,7 @@ function handlePlayerPick(e) {
     //Swap player
     player = 'computer'
     //Computer acctact
-    setTimeout(cpuAttack, 0)
+    setTimeout(cpuAttack, 1000)
 }
 
 function checkHit(id, player) {
