@@ -578,8 +578,6 @@ function handlePlayerPick(e) {
     //Prevent pick the square that has been picked before
     let pickedNum = parseInt(t.getAttribute('number'))
     if (playerPickedNum.some(num => num === pickedNum)) {
-        console.log('picked before')
-        console.log('pick another')
         playMessage.innerHTML = 'You already picked this before, try another'
         return
     }

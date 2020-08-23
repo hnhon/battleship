@@ -58,7 +58,6 @@
 .computer-smaller-grid:hover::after {
     cursor: pointer;
     background-color: rgba(90, 150, 170, 0.5);
-
     content: '';
     border-radius: 50%;
     width: 90%;
